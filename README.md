@@ -1,5 +1,7 @@
 # This is a DIY automatic cat litter box.
 
+## 3/8/2025 update: V2 is now ready, way more capable, and it now supports pellets, it does the sifting part automatically. Documantation uptate will follow. 
+
 ## Keynotes:
 1. Battery powered.
    It is using an NRF52832, standby on 6x18650 batteries is about a Year. Real life usage with 4 cats allowed for 3 months between charges, ~400 cleaning cycles.
