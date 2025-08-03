@@ -7,11 +7,7 @@ body {
   margin: auto;
 }
 
-html {
-    text-align: left;
-    display: flex;
-    justify-content: center;
-}
+
 
 .td {
   position: absolute;

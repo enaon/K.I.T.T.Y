@@ -188,6 +188,7 @@ const Comms = {
           if (appList===null) return reject(err || "");
           info.apps = appList;
           console.log("<COMMS> getDeviceInfo", info);
+          device=info;
           resolve(info);
         }, true /* callback on newline */);
       });
@@ -264,9 +265,10 @@ const Comms = {
     let d = new Date();
     let tz = d.getTimezoneOffset()/-60
     let cmd = '\x03\x10setTime('+(d.getTime()/1000)+');';
+    console.log("ew set time 5");
     // in 1v93 we have timezones too
     cmd += 'E.setTimeZone('+tz+');';
-    cmd += "(s=>{s&&(s.timezone="+tz+")&&require('Storage').write('ew.json',s);})(require('Storage').readJSON('ew.json',1))\n";
+    //cmd += "(s=>{s&&(s.timezone="+tz+")&&require('Storage').write('ew.json',s);})(require('Storage').readJSON('ew.json',1))\n";
     return Comms.write(cmd);
   },
   // Reset the device
@@ -276,24 +278,24 @@ const Comms = {
   },
   
   writeSettings : (val) => {
-    return new Promise((resolve,reject) => {
-      let cmd = '\x03\x10';
-	cmd += `require('Storage').write('ew.json', ${val});`;
-      Puck.write(cmd, (result) => {
-        if (result===null) return reject("");
-        resolve();
-      });
-    });
+   // return new Promise((resolve,reject) => {
+   //   let cmd = '\x03\x10';
+//	cmd += `require('Storage').write('ew.json', ${val});`;
+   //   Puck.write(cmd, (result) => {
+   //     if (result===null) return reject("");
+   //     resolve();
+   //   });
+   // });
   },
   enableFlash : () => {
-    return new Promise((resolve,reject) => {
-      let cmd = '\x03\x10';
-	cmd += `var spi=new SPI();spi.setup({sck:D2,mosi:D3,miso:D4,mode:0}); spi.send([0xab],D5);`;
-      Puck.write(cmd, (result) => {
-        if (result===null) return reject("");
-        resolve();
-      });
-    });
+ //   return new Promise((resolve,reject) => {
+ //     let cmd = '\x03\x10';
+//	cmd += `var spi=new SPI();spi.setup({sck:D2,mosi:D3,miso:D4,mode:0}); spi.send([0xab],D5);`;
+ //     Puck.write(cmd, (result) => {
+  //      if (result===null) return reject("");
+ //       resolve();
+ //     });
+ //   });
   },
   changeSettings : (file,id,val) => {
     return new Promise((resolve,reject) => {

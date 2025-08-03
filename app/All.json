@@ -1,1 +1,1 @@
-["init","oled","handler","main"]
+["init-magic3","display-magic3","handler-magic3","main-v2","scale","ToF","logger" ]

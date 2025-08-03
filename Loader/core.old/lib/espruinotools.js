@@ -6778,6 +6778,7 @@ To add a new serial device, you must add an object to
    Espruino.addProcessor("transformForEspruino", function(code, callback) {
      if (Espruino.Config.SET_TIME_ON_WRITE) {
        var time = new Date();
+      console.log("ew set time 1")
        code = "setTime("+(time.getTime()/1000)+");E.setTimeZone("+(-time.getTimezoneOffset()/60)+")\n"+code;
      }
      callback(code);

@@ -1,54 +1,226 @@
 [
-	{ "id": "init",
-		"name": "init",
+	{ "id": "init-dsd6",
+		"name": "init-dsd6",
 		"icon": "../icon.png",
 		"version":"1.00",
 		"description": "init and watchdog. ",
-		"tags": "core",
+		"tags": "dsd6",
 		"type":"core",
 	    "needsFeatures":["dsd6"],
 		"storage": [
-			{"name":".bootrst","url":"../init.js"}
+			{"name":".bootrst","url":"../dsd6/init.js"},
+			{"name":"sysOled","url":"../dsd6/oled.js"}	
 		]
 	},
-	{ "id": "handler",
-		"name": "Handler",
+	{ "id": "handler-dsd6",
+		"name": "Handler-dsd6",
 		"icon": "../icon.png",
 		"version":"1.00",
 		"description": "handlers ",
-		"tags": "core",
+		"tags": "dsd6",
 	    "needsFeatures":["dsd6"],
 		"storage": [
-			{"name":"handler","url":"../handler.js"},
-			{"name":"handler_btn","url":"../handler_btn.js"},
-			{"name":"handler_cron","url":"../handler_cron.js"},
-			{"name":"handler_acc","url":"../handler_acc.js"},
-			{"name":"handler_charge","url":"../handler_charge.js"},
-			{"name":"handler_set","url":"../handler_set.js"}
+			{"name":"handler","url":"../dsd6/handler.js"},
+			{"name":"handler_btn","url":"../dsd6/handler_btn.js"},
+			{"name":"handler_cron","url":"../dsd6/handler_cron.js"},
+			{"name":"handler_acc","url":"../dsd6/handler_acc.js"},
+			{"name":"handler_charge","url":"../dsd6/handler_charge.js"},
+			{"name":"handler_set","url":"../dsd6/handler_set.js"}
 		]
 	},  
-	{ "id": "display",
-		"name": "display",
-		"icon": "../icon.png",
-		"version":"1.00",
-		"description": "oled driver.",
-		"tags": "core",
-		"type":"core",
-	    "needsFeatures":["dsd6"],
-		"storage": [
-		{"name":"sysOled","url":"../oled.js"}
-		]
-	},
-	{ "id": "main",
+	
+		{ "id": "main",
 		"name": "main",
 		"icon": "../icon.png",
 		"version":"1.94.2",
 		"description": "sCat-a main app",
-		"tags": "tools",
+		"tags": "dsd6",
 	    "needsFeatures":["dsd6"],
 		"storage": [
-			{"name":"scata","url":"../main.js"}
+			{"name":"scata","url":"../dsd6/main.js"}
+		]
+	},
+
+	{ "id": "powerbank",
+		"name": "powerbank",
+		"icon": "../icon.png",
+		"version":"1.94.2",
+		"description": "powerbank",
+		"tags": "dsd6",
+	    "needsFeatures":["dsd6"],
+		"storage": [
+			{"name":"powerbank","url":"../dsd6/powerbank.js"}
+		]
+	},
+	
+	{ "id": "ew_init",
+		"name": "init-magic3",
+		"icon": "../icon.png",
+		"version":"2.70",
+		"description": "init and watchdog. ",
+		"tags": "magic3",
+		"type":"core",
+	    "needsFeatures":["magic3"],
+		"storage": [
+			{"name":".bootrst","url":"../magic3/init.js"}
+		]
+	},	
+		{ "id": "ew_display",
+		"name": "display driver-magic3",
+		"icon": "../icon.png",
+		"version":"2.70",
+		"description": "lcd driver",
+		"tags": "magic3",
+		"type":"core",
+	    "needsFeatures":["magic3"],
+		"storage": [
+			{"name":"ew_display","url":"../magic3/lcd_magic_16.js"}
+		]
+	},
+	{ "id": "ew_handler",
+		"name": "Handler-magic3",
+		"icon": "../icon.png",
+		"version":"2.70",
+		"description": "handlers ",
+		"tags": "magic3",
+	    "needsFeatures":["magic3"],
+		"storage": [
+			{"name":"ew_handler","url":"../magic3/handler/handler.js"},
+			{"name":"ew_handler_face","url":"../magic3/handler/handler_face.js"},
+			{"name":"ew_handler_fonts","url":"../magic3/handler/handler_fonts.js"},
+			{"name":"ew_handler_notify","url":"../magic3/handler/handler_notify.js"},
+			{"name":"ew_handler_set","url":"../magic3/handler/handler_set.js"},
+			{"name":"ew_handler_btn","url":"../magic3/handler/handler_btn.js"},
+			{"name":"ew_handler_conn","url":"../magic3/handler/handler_conn.js"},
+			{"name":"ew_handler_cron","url":"../magic3/handler/handler_cron.js"},
+			{"name":"ew_handler_touch","url":"../magic3/handler/handler_touch.js"},
+			{"name":"ew_handler_touch_716","url":"../magic3/handler/handler_touch_716.js"},
+			{"name":"ew_handler_acc_SC7A20","url":"../magic3/handler/handler_acc_SC7A20.js"},
+			{"name":"ew_handler_buzz","url":"../magic3/handler/handler_buzz.js"}			
+		]
+	},
+	{ "id": "ew_UI",
+		"name": "UI support",
+		"icon": "../icon.png",
+		"version":"2.70",
+		"description": "UI",
+		"tags": "magic3",
+		"type":"core",
+		"readme": "README.md",
+	    "needsFeatures":["magic3"],
+		"storage": [
+			{"name":"C:ew_UI","url":"../magic3/UI/ui.js"},
+			{"name":"C:ew_icons","url":"../magic3/UI/icons.js"}
+		]
+	},
+	{ "id": "ew_settings",
+		"name": "Settings",
+		"icon": "../icon.png",
+		"version":"2.70",
+		"description": "Settings face",
+		"tags": "magic3",
+		"type":"clock",
+		"readme": "README.md",
+	    "needsFeatures":["magic3"],
+		"storage": [
+			{"name":"ew_f_settings","url":"../magic3/settings/settings.js"},
+			{"name":"ew_f_set_set","url":"../magic3/settings/set_set.js"},
+			{"name":"ew_f_set_apps","url":"../magic3/settings/set_apps.js"},
+			{"name":"ew_f_set_theme","url":"../magic3/settings/set_theme.js"},
+			{"name":"ew_f_set_dash","url":"../magic3/settings/set_dash.js"},
+			{"name":"ew_f_set_more","url":"../magic3/settings/set_more.js"}
+		]
+	},
+	
+	{ "id": "ew_kitty",
+		"name": "K.I.T.T.Y",
+		"icon": "../icon.png",
+		"version":"2.70",
+		"description": "K.I.T.T.Y main app",
+		"tags": "magic3",
+	    "needsFeatures":["magic"],
+		"storage": [
+			{"name":"ew_kitty","url":"../magic3/kitty/kitty.js"},
+			{"name":"ew_f_main","url":"../magic3/kitty/f_kitty.js"}
+		]
+	},
+	
+	{ "id": "ew_scale",
+		"name": "scale",
+		"icon": "../icon.png",
+		"version":"2.70",
+		"description": "scale",
+		"tags": "magic3",
+	    "needsFeatures":["magic3"],
+		"storage": [
+			{"name":"ew_scale","url":"../magic3/scale/scale.js"},
+			{"name":"ew_f_scale","url":"../magic3/scale/f_scale.js"},
+			{"name":"ew_f_scale_calib","url":"../magic3/scale/f_scale_calib.js"}
+
+		]
+	},
+	{ "id": "ew_logger",
+		"name": "logger",
+		"icon": "../icon.png",
+		"version":"2.70",
+		"description": "logger",
+		"tags": "magic3",
+	    "needsFeatures":["magic3"],
+		"storage": [
+			{"name":"ew_logger_kitty","url":"../magic3/logger/logger_kitty.js"},
+			{"name":"ew_logger_battery","url":"../magic3/logger/logger_battery.js"},
+			{"name":"ew_f_view_activity","url":"../magic3/logger/f_view_activity.js"},
+			{"name":"ew_f_view_battery","url":"../magic3/logger/f_view_battery.js"},
+			{"name":"ew_f_view_cycles","url":"../magic3/logger/f_view_cycles.js"}	
+		]
+	},
+	{ "id": "ew_ToF",
+		"name": "ToF",
+		"icon": "../icon.png",
+		"version":"2.70",
+		"description": "Distance",
+		"tags": "magic3",
+		"storage": [
+			{"name":"ew_ToF","url":"../magic3/ToF/ToF.js"},
+			{"name":"ew_f_ToF","url":"../magic3/ToF/f_ToF.js"}
+
+		]
+	},
+	{ "id": "init-nano",
+		"name": "init-nano",
+		"icon": "../icon.png",
+		"version":"1.00",
+		"description": "init and watchdog. ",
+		"tags": "nano",
+		"type":"core",
+	    "needsFeatures":["nano"],
+		"storage": [
+			{"name":".bootrst","url":"../nano/init.js"}
+		]
+	},
+	{ "id": "handler-nano",
+		"name": "Handler-nano",
+		"icon": "../icon.png",
+		"version":"1.00",
+		"description": "handlers ",
+		"tags": "nano",
+	    "needsFeatures":["nano"],
+		"storage": [
+			{"name":"handler","url":"../nano/handler.js"},
+			{"name":"handler_set","url":"../nano/handler_set.js"},
+			{"name":"handler_btn","url":"../nano/handler_btn.js"}
+
+		]
+	},
+	{ "id": "vibrator",
+		"name": "vibrator",
+		"icon": "../icon.png",
+		"version":"1.94.2",
+		"description": "vibrator",
+		"tags": "nano",
+	    "needsFeatures":["nano"],
+		"storage": [
+			{"name":"vibrator","url":"../nano/vibrator.js"}
 		]
 	}
-
 ]

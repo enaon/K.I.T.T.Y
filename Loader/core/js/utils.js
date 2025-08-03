@@ -85,13 +85,13 @@ let DEVICEINFO = [{
   {
     id: "DSD6",
     name: "DSD6",
-    features: ["DSD6", "V1", "EW"],
+    features: ["dsd6", "V1", "EW"],
     img: "https://loader.eucwatch.com/tools/assets/images/dsd6.jpg"
   },
   {
-    id: "EUCLIGHT",
-    name: "eucLight",
-    features: ["EUCLIGHT"],
+    id: "EW_NANO",
+    name: "nano",
+    features: ["nano"],
     img: "https://loader.eucwatch.com/tools/assets/images/eucLight.jpg"
   }
 ];

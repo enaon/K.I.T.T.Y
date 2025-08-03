@@ -443,6 +443,7 @@ ChangeLog:
       var d = new Date();
       var cmd = 'setTime('+(d.getTime()/1000)+');';
       // in 1v93 we have timezones too
+      console.log("ew set time 4");
       cmd += 'if (E.setTimeZone) E.setTimeZone('+d.getTimezoneOffset()/-60+');\n';
       write(cmd, cb);
     },

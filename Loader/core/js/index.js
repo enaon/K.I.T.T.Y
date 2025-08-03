@@ -598,9 +598,9 @@ function getInstalledApps(refresh) {
   */
   return Comms.getDeviceInfo()
     .then(info => {
-      console.log("ew",device.id,device)
-      if (Const.DEVICEID!=info.id) { device.id=Const.DEVICEID; Const.DEVICEID=info.id;}
-      else device.id = info.id;
+      console.log("ew-1",device.id,info.id,device)
+      //if (Const.DEVICEID!=info.id) { device.id=Const.DEVICEID; Const.DEVICEID=info.id;}
+      //else device.id = info.id;
       device.version = info.version;
       device.appsInstalled = info.apps;
       haveInstalledApps = true;
@@ -949,11 +949,13 @@ if (btn) btn.addEventListener("click",event=>{
 btn = document.getElementById("installall");
 if (btn) btn.addEventListener("click",event=>{ 
     let installSet="ALL"
-    if (device.id=="MAGIC3") installSet="Magic"
-    else if (device.id=="DSD6") installSet="DSD6"
+    console.log("ew-2",device.id,device)
 
+    if (device.id=="MAGIC3") installSet="Magic3"
+    else if (device.id=="DSD6") installSet="DSD6"
+    else if (device.id=="EW_NANO") installSet="nano"
     else { 
-          installSet="DSD6"
+          installSet="Magic3"
           //Progress.hide({sticky:true});
           //showToast("PLEASE CONNECT TO THE WATCH","error");
         //return;
