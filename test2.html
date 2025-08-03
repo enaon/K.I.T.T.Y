@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=0.8">
+  <title>Automatic Cat Litter Box</title>
+  <style>
+    /* CSS for dark gray theme */
+    body {
+      background-color: #12141A;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden; /* To prevent horizontal scrolling */
+      display: flex;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    /* Styles for header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #12141A;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 10px 70px;
+      box-sizing: border-box;
+      z-index: 1000; /* Ensure it's above other elements */
+    }
+    header img {
+      width: 50px;
+      height: 50px;
+      margin-right: 10px;
+    }
+    header h1 {
+      font-size: 20px;
+      margin: 10;
+    }
+    /* Styles for menu */
+    .menu {
+      position: fixed;
+      top: 60px; /* Adjust top position */
+      left: -250px; /* Initially hide the menu */
+      background-color: #10141A;
+      width: 250px; /* Adjust menu width */
+      height: calc(100% - 100px); /* Adjust menu height */
+      padding: 20px;
+      box-shadow: 5px 0 5px rgba(0, 0, 0, 0.5); /* Shadow on the right side */
+      transition: left 0.3s ease; /* Smooth transition for sliding effect */
+    }
+    .menu.show {
+      left: 0; /* Show the menu when 'show' class is added */
+      width: 150px; /* Adjust menu width when it's shown */
+    }
+    .menu.hidden {
+      width: 0; /* Reduce menu width to 0 when it's hidden */
+    }
+    .menu a {
+      display: flex;
+      align-items: center;
+      color: #fff;
+      text-decoration: none;
+      margin-bottom: 15px; /* Add some margin between menu items */
+    }
+    /* Style for the first menu item */
+    .menu a:first-child {
+      margin-top: 100px; /* Add some top margin to the first menu item */
+    }
+    .menu .menu-icon {
+      margin-right: 10px;
+      display: flex;
+      align-items: center;
+    }
+    .menu .menu-item-text {
+      display: block;
+    }
+    .content {
+      padding: 0px;
+      width: 100%;
+      max-width: 410px; /* Optional: Set maximum width for content */
+      margin-top: 100px; /* Ensure content does not go behind header */
+    }
+    /* Hamburger menu icon */
+    #menu-icon {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
+      z-index: 9999; /* Ensure it's above other elements */
+    }
+    /* Style for menu button */
+    #menu-icon svg {
+      fill: #fff; /* Change the color of the menu button */
+    }
+    
+    /* New CSS for iframe */
+    .content iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: none; /* Initially hide all iframes */
+    }
+    
+
+    .td {
+      padding: 0px;
+      width: 100%;
+      max-width: 410px; /* Optional: Set maximum width for content */
+      margin-top: 100px; /* Ensure content does not go behind header */
+    }
+    .td span {
+      color: #888;
+      position: absolute; left: 5px; top: 3px;
+    }
+    
+    .td_scrollable::-webkit-scrollbar-track {
+    	background-color: #12141A;
+    }
+    
+    .td_scrollable::-webkit-scrollbar {
+    	width: 12px;
+    	background-color: #000;
+    }
+    
+    .td_scrollable::-webkit-scrollbar-thumb {
+    	border-radius: 10px;
+    	background-color: #555;
+    }
+    
+    .td_label {
+      display: table;
+      text-align: center;
+    }
+    .td_label span {
+      display: table-cell;
+      vertical-align: middle;
+      font-size: 20px;
+    }
+    .td_btn {
+    }
+    .td_btn_a {
+      margin-top: 13px;
+      margin-left: auto; margin-right: auto; /* centered */
+      font-size: 17px;
+      font-weight: bolder;
+      color: #09F;
+      border: 4px solid;
+      border-radius: 18px;
+      width: 60px;
+      height: 18px;
+      padding: 9px;
+      cursor: pointer;
+      user-select: none;
+    
+      
+    }
+    .td_btn_a:hover { background-color: #036; }
+    .td_btn[pressed="1"] .td_btn_a { color: #09F; }
+    .td_btn[pressed="1"] .td_btn_a:hover { background-color: #06B; }
+    .td_toggle_a {
+      margin-top: 15px;
+      margin-left: auto; margin-right: auto; /* centered */
+      border: 2px solid #fff;
+      border-radius: 14px;
+      width: 48px;
+      height: 28px;
+    }
+    .td_toggle_a:hover {
+      background-color: #06B;
+    }
+    .td_toggle_b {
+      background-color: #fff;
+      border: 2px solid #fff;
+      border-radius: 8px;
+      width: 16px;
+      height: 16px;
+      margin: 4px;
+    }
+    .td_toggle[pressed="1"] .td_toggle_b {
+      margin-left: 26px;
+    }
+    .td_val {
+      text-align: center;
+    }
+    .td_val div {
+      display:inline-block;
+    }
+    .td_val_a {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #09F;
+    }
+    .td_val_b {
+      margin-left: 20px;
+      margin-right: 20px;
+      font-size: 25px;
+      color: #09F;
+      cursor: pointer;
+      user-select: none;
+    }
+    .td_val_b:hover {
+      color:#fff;
+    }
+    .td_gauge {
+      text-align: center;
+    }
+    .td_gauge canvas {
+      width: 100%;
+      height: 100%;
+    }
+    .td_gauge_a {
+      position: absolute;
+      left: 0px; right: 0px; top: 50%;
+      font-size: 40px;
+      color: #09F;
+    }
+    .td_graph {
+      text-align: center;
+    }
+    .td_graph canvas {
+      width: 100%;
+      height: 100%;
+    }
+    .td_log_a {
+      position: absolute;
+      top: 24px;
+      left: 4px;
+      right: 4px;
+      bottom: 4px;
+      padding: 4px;
+      font: 16px sans-serif;
+      background-color: #000;
+      overflow: auto;
+    }
+    .td_modal {
+      background-color: rgba(0,0,0,0.75);
+      border: 2px solid white;
+      cursor: pointer;
+      user-select: none;
+    }
+    .td_modal span {
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 40px;
+    }   
+    
+    
+    
+    
+    
+    
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="docs/images/icon.png" alt="Icon">
+  <h1>K.I.T.T.Y</h1>
+</header>
+  <script src="tinydash1.js"></script>
+
+<div class="menu hidden" id="menu">
+  <a href="#" onclick="loadPage('control')"><span class="menu-icon"><img src="control_icon.png" alt="Control Icon"></span><span class="menu-item-text">Control</span></a>
+  <a href="#" onclick="loadPage('loader')"><span class="menu-icon"><img src="loader_icon.png" alt="Loader Icon"></span><span class="menu-item-text">Loader</span></a>
+  <a href="#" onclick="showMakingOf()"><span class="menu-icon"><img src="making_of_icon.png" alt="Making "></span><span class="menu-item-text">Making Of</span></a>
+  <a href="#" onclick="showParts()"><span class="menu-icon"><img src="parts_icon.png" alt="Parts Icon"></span><span class="menu-item-text">Parts</span></a>
+</div>
+
+<div class="content" id="content">
+
+</div>
+
+<!-- Hamburger menu icon -->
+<div id="menu-icon" onclick="toggleMenu()">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+  </svg>
+</div>
+
+<script>
+  var startX;
+  var endX;
+  var threshold = 50; // Minimum swipe distance required
+
+  function toggleMenu() {
+    var menu = document.getElementById('menu');
+    var isOpen = menu.classList.contains('show');
+    if (!isOpen) {
+      menu.classList.add('show');
+      menu.classList.remove('hidden');
+    } else {
+      menu.classList.remove('show');
+      menu.classList.add('hidden');
+    }
+  }
+
+  function handleTouchStart(e) {
+    startX = e.touches[0].clientX;
+  }
+
+  function handleTouchEnd(e) {
+    endX = e.changedTouches[0].clientX;
+    var direction = endX - startX;
+
+    if (direction > threshold) {
+      toggleMenu(); // Open menu on swipe right
+    } else if (direction < -threshold) {
+      toggleMenu(); // Close menu on swipe left
+    }
+  }
+
+  // Swipe gesture handling for opening and closing menu
+  document.addEventListener('touchstart', handleTouchStart, false);
+  document.addEventListener('touchend', handleTouchEnd, false);
+
+  // Close menu when clicking outside of it
+  document.addEventListener('click', function(e) {
+    if (!document.getElementById('menu').contains(e.target) && !document.getElementById('menu-icon').contains(e.target)) {
+      document.getElementById('menu').classList.remove('show');
+      document.getElementById('menu').classList.add('hidden');
+    }
+  });
+
+  // Close menu when clicking inside the menu's empty space
+  document.getElementById('menu').addEventListener('click', function(e) {
+    if (e.target === this) {
+      document.getElementById('menu').classList.remove('show');
+      document.getElementById('menu').classList.add('hidden');
+    }
+  });
+
+  // Function to load page content
+var controlIframe; // Keep track of the iframe corresponding to the "control" page
+
+function loadPage(page) {
+  var iframe = document.getElementById('iframe-' + page);
+
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.id = 'iframe-' + page;
+    iframe.src = page + '.html'; // Assuming your external pages are named control.html, loader.html, etc.
+    iframe.style.width = '100%';
+    iframe.style.height = '500%';
+    if (page === 'control' && !controlIframe) {
+      controlIframe = iframe; // Keep the iframe corresponding to the "control" page active only if it's not already active
+    } else if (page === 'loader' && controlIframe) {
+      iframe = controlIframe; // If "loader" page is selected and there is an active "control" iframe, simply use it
+    } else {
+      document.getElementById('content').innerHTML = ''; // Clear content area for all other pages
+      controlIframe = null; // Clear controlIframe if a different page is selected
+    }
+    document.getElementById('content').appendChild(iframe);
+  }
+
+  // Hide all iframes except the one being loaded
+  var iframes = document.querySelectorAll('.content iframe');
+  iframes.forEach(function(frame) {
+    if (frame.id !== iframe.id) {
+      frame.style.display = 'none';
+    }
+  });
+
+  // Show the iframe being loaded
+  iframe.style.display = 'block';
+
+  toggleMenu(); // Close menu after clicking on a menu item
+}
+
+
+  // Function to show making of images
+  function showMakingOf() {
+    var makingOfImages = document.createElement('div');
+    makingOfImages.id = 'making-of-images';
+    document.getElementById('content').innerHTML = ''; // Clear content area
+    document.getElementById('content').appendChild(makingOfImages);
+
+    var folders = ['base', 'ball', 'drawer', 'electronics', 'motor', 'scoop', 'lock'];
+    folders.forEach(function(folder) {
+      for (var i = 1; i <= 7; i++) {
+        var img = document.createElement('img');
+        img.src = 'docs/images/' + folder + '/image_' + i + '.jpg';
+        img.style.maxWidth = '200px';
+        img.style.marginRight = '10px';
+        document.getElementById('making-of-images').appendChild(img);
+      }
+    });
+    toggleMenu(); // Close menu after clicking on a menu item
+  }
+
+  // Function to show parts list
+  function showParts() {
+    var connection = { char: {} };
+    var myService = 0xffa0; // fill in a service you're looking for here
+    var myCharacteristic = 0xffa1; // fill in a characteristic from the service here
+    function connect() {
+      elements.modal.remove();
+      navigator.bluetooth.requestDevice({
+          filters: [{ namePrefix: 'eL-' }],
+          optionalServices: [myService],
+          acceptAllDevices: false
+        })
+        .then(device => {
+          //console.log("found :"+device.name);
+          elements.status.setValue(`CONNECTING`);
+          elements.log.log(`found ${device.name}`);
+          device.addEventListener('gattserverdisconnected', onDisconnected);
+          return device.gatt.connect();
+        })
+        .then(server => server.getPrimaryService(myService))
+        .then(service => service.getCharacteristics())
+        .then(characteristic => { for (c in characteristic) { connection.char[c] = characteristic[c]; } })
+        .then(_ => connection.char[0].startNotifications())
+        .then(subscribeToChanges)
+        .then(_ => connection.char[1].startNotifications())
+        .then(subscribeToChanges)
+        .then(_ => {
+          //console.log("connected to device :"+1 );
+          connection.write = function(v) {
+            const encoder = new TextEncoder('utf-8');
+            const data = encoder.encode(v);
+            connection.char[0].writeValue(data).then(function() {
+              console.log("send :" + data);
+            }).catch(function(error) {
+              console.error('send failed!', error);
+            });
+          }
+        })
+        .then(_ => {
+          //setTime
+          let d = new Date();
+          let tz = d.getTimezoneOffset() / -60
+          connection.write("16=" + d.getTime().toString());
+          setTimeout(function() {
+            connection.write("17=" + tz);
+          }, 500);
+          console.log('done');
+        })
+        .catch(error => { console.error(error);
+          elements.status.setValue("");
+          elements.modalBlank.replaceWith(elements.modal); });
+    }
+
+    function onDisconnected(event) {
+      const device = event.target;
+      //console.log(`Device ${device.name} is disconnected.`);
+      elements.log.log(`Device ${device.name} is disconnected.`);
+      elements.modalBlank.replaceWith(elements.modal);
+      //connect();
+    }
+
+    function subscribeToChanges(characteristic) {
+      //console.log("sub :",characteristic);
+      characteristic.oncharacteristicvaluechanged = handleData;
+    }
+    //
+    var sandType = { 1: "betonite", 2: "silicone", 3: "nonstick", 4: "tofu" };
+    var cache = { lt: 0, dt: -1, au: -1, bs: -1, ps: -1, db: -1, ac: -1, ad: -1, pb: -1, pos: 45, cb: -1, pbv: -1, sp: -1, ss: -1, pwr: 0, busy: -1 };
+
+    function handleData(event) {
+      // get the data buffer from the meter:
+      var buf = new Uint8Array(event.target.value);
+      const decoder = new TextDecoder();
+      const str = decoder.decode(event.target.value);
+      const id = str.split("=")[0];
+      const val = str.split("=")[1];
+      if (event.target.uuid.startsWith("0000ffa1"))
+        elements.log.log(Date().toString().split(' ')[4] + ":" + str);
+      else if (event.target.uuid.startsWith("0000ffa2")) {
+        if (id == "dt") elements[id].setValue(val);
+        else if (id.startsWith("v")) elements[id].setValue(Number(val).toFixed(2) + " V");
+        else if (id == "pp") {
+          cache.pp = val;
+          if (!cache.pwr) elements[id].setValue(Number(val));
+        }
+        else if (id == "pwr") {
+          if (Number(val) && cache.pwr != 1) {
+            cache.pwr = 1;
+            elements.status.setValue("ON");
+            elements.pp.replaceWith(elements.pos);
+            elements.pos.setValue(cache.pos);
+          }
+          else if (!Number(val) && cache.pwr != 0) {
+            cache.pwr = 0;
+            elements.status.setValue("IDLE");
+            elements.pos.replaceWith(elements.pp);
+          }
+          elements.pwr.setValue(Number(val));
+        }
+        else if (id == "busy") {
+          if (Number(val) && cache.busy != 1) {
+            cache.busy = 1;
+            elements.status.setValue("BUSY");
+            elements.he.replaceWith(elements.ps);
+            elements.clean.replaceWith(elements.abort);
+          }
+          else if (!Number(val) && cache.busy != 0) {
+            cache.busy = 0;
+            elements.status.setValue(120 < cache.pp ? "ON" : "IDLE");
+            elements.ps.replaceWith(elements.he);
+            elements.abort.replaceWith(elements.clean);
+          }
+        }
+        else if (id == "db") return;
+        else {
+          elements[id].setValue(Number(val));
+          cache[id] = val;
+        }
+      }
+    }
+    // Set up the controls we see on the screen
+    var data = [];
+    for (var i = 0; i < 100; i++) data.push(Math.cos(i / 10));
+    var elements = {
+      //header
+      heading: TD.label({ x: 0, y: 10, width: 400, height: 60, label: "" }),
+      dt: TD.value({ x: 5, y: 10, width: 100, height: 40, label: "", value: 0 }),
+      //right dash
+      pos: TD.gauge({ x: 0, y: 70, width: 230, height: 220, label: "BALL POSITION", value: 0, min: 0, max: 205 }),
+      pp: TD.gauge({ x: 0, y: 70, width: 230, height: 220, label: "BATTERY PERCENTAGE", value: 0, min: 0, max: 100 }),
+      ps: TD.toggle({ x: 0, y: 290, width: 230, height: 60, label: "PAUSE", value: "0", onchange: function(el, v) { connection.write(80 + v); } }),
+      he: TD.label({ x: 0, y: 290, width: 230, height: 60, label: "" }),
+      //left dash
+      rtod: TD.value({ x: 230, y: 50, width: 170, height: 55, label: "TODAY", value: "0" }),
+      rtot: TD.value({ x: 230, y: 105, width: 170, height: 55, label: "TOTAL", value: "0" }),
+      lt: TD.value({ x: 230, y: 160, width: 170, height: 55, label: "LITRES", value: "0" }),
+      vp: TD.value({ x: 230, y: 215, width: 170, height: 60, label: "VOLT", value: "0" }),
+      //controller
+      vc: TD.value({ x: 230, y: 270, width: 170, height: 80, label: "DSD6", value: 0 }),
+      //lcd 
+      hb: TD.label({ x: 0, y: 360, width: 400, height: 70, label: "" }),
+      status: TD.value({ x: 100, y: 360, width: 200, height: 60, label: "", value: "0" }),
+      //midle
+      heading_more1: TD.label({ x: 0, y: 440, width: 195, height: 260, label: "" }),
+      heading_more2: TD.label({ x: 205, y: 440, width: 195, height: 260, label: "" }),
+      //manual clean
+      abort: TD.button({
+        x: 0,
+        y: 480,
+        width: 195,
+        height: 90,
+        color: 555,
+        label: "",
+        value: 0,
+        name: "button",
+        glyph: "ABORT",
+        onchange: function(el, v) {
+          if (v) connection.write(18);
+          elements.status.setValue(`ABORTING`);
+        }
+      }),
+      clean: TD.button({
+        x: 0,
+        y: 480,
+        width: 195,
+        height: 90,
+        color: 555,
+        label: "",
+        value: 0,
+        name: "button",
+        glyph: "CLEAN",
+        onchange: function(el, v) {
+          if (v) connection.write(12);
+        }
+      }),
+      //manual empty
+      em: TD.button({
+        x: 205,
+        y: 480,
+        width: 195,
+        height: 70,
+        label: "",
+        value: 0,
+        name: "button",
+        glyph: "EMPTY",
+        onchange: function(el, v) {
+          if (v) connection.write(13);
+        }
+      }),
+      //settings
+      //auto clean on-off
+      ac: TD.toggle({ x: 0, y: 460, width: 195, height: 80, label: "AUTO", value: 0, name: "Toggle", onchange: function(el, v) { connection.write(70 + v); } }),
+      //auto clean delay
+      ad: TD.value({ x: 0, y: 540, width: 195, height: 80, label: "DELAY", value: "1", min: 1, step: 1, max: 9, onchange: function(el, v) { connection.write(60 + v); } }),
+      //uvc light trigger
+      au: TD.toggle({ x: 0, y: 620, width: 195, height: 80, label: "UVC", value: 0, name: "Toggle", onchange: function(el, v) { connection.write(50 + v); } }),
+      //patern mode 
+      sp: TD.value({
+        x: 205,
+        y: 460,
+        width: 195,
+        height: 80,
+        label: "MODE",
+        value: 1,
+        min: 1,
+        step: 1,
+        max: 3,
+        onchange: function(el, v) {
+          elements.pn.setValue(sandType[v]);
+          connection.write(40 + v);
+        }
+      }),
+      //patern name
+      pn: TD.value({ x: 205, y: 540, width: 195, height: 80, label: "", value: "0" }),
+      //patern speed
+      ss: TD.value({ x: 205, y: 620, width: 195, height: 80, label: "SPEED", value: 5, min: 1, step: 1, max: 9, onchange: function(el, v) { connection.write(30 + v); } }),
+      //more
+      more1: TD.label({ x: 0, y: 0, width: 0, height: 0, label: "" }),
+      more2: TD.label({ x: 0, y: 0, width: 0, height: 0, label: "" }),
+      more3: TD.label({ x: 0, y: 0, width: 0, height: 0, label: "" }),
+      more4: TD.label({ x: 0, y: 0, width: 0, height: 0, label: "" }),
+      //on-off
+      pwr: TD.toggle({
+        x: 0,
+        y: 580,
+        width: 195,
+        height: 70,
+        label: "LIGHT",
+        value: 0,
+        name: "button",
+        onchange: function(el, v) {
+          connection.write(11);
+        }
+      }),
+      //footer
+      //set
+      settings: TD.toggle({
+        x: 0,
+        y: 710,
+        width: 195,
+        height: 75,
+        label: "SET",
+        value: 0,
+        name: "Toggle",
+        onchange: function(el, v) {
+          if (v == 1) {
+            elements.pwr.replaceWith(elements.ac);
+            elements.em.replaceWith(elements.ad);
+            elements.more1.replaceWith(elements.au);
+            elements.more2.replaceWith(elements.sp);
+            elements.more3.replaceWith(elements.pn);
+            elements.more4.replaceWith(elements.ss);
+          }
+          else {
+            elements.log.log("Settings Saved");
+            connection.write(19);
+            elements.ac.replaceWith(elements.pwr);
+            elements.ad.replaceWith(elements.em);
+            elements.au.replaceWith(elements.more1);
+            elements.sp.replaceWith(elements.more2);
+            elements.pn.replaceWith(elements.more3);
+            elements.ss.replaceWith(elements.more4);
+          }
+        }
+      }),
+      //log
+      db: TD.toggle({
+        x: 205,
+        y: 710,
+        width: 195,
+        height: 75,
+        label: "DBG",
+        value: 0,
+        name: "Toggle",
+        onchange: function(el, v) {
+          if (v) {
+            elements.logBlank.replaceWith(elements.log);
+          }
+          else
+            elements.log.replaceWith(elements.logBlank);
+        }
+      }),
+      log: TD.log({ x: 0, y: 800, width: 400, height: 400, id: 5, label: "Console output", text: "K.I.T.T.Y" }),
+      logBlank: TD.label({ x: 1, y: 1, width: 1, height: 1, label: "" }),
+      //modal
+      modal: TD.modal({ x: 0, y: 10, width: 395, height: 460, label: "Click to connect", onchange: connect }),
+      modalBlank: TD.label({ x: 0, y: 0, width: 0, height: 0, label: "" }),
+    }
+    elements.log.log("Version 1.0");
+    for (var i in elements)
+      document.body.appendChild(elements[i]);
+    elements.log.replaceWith(elements.logBlank);
+    elements.ac.replaceWith(elements.pwr);
+    elements.ad.replaceWith(elements.em);
+    elements.au.replaceWith(elements.more1);
+    elements.sp.replaceWith(elements.more2);
+    elements.pn.replaceWith(elements.more3);
+    elements.ss.replaceWith(elements.more4);
+    elements.pn.setValue(sandType[1]);
+    elements.status.setValue("");
+    toggleMenu(); // Close menu after clicking on a menu item
+  }
+</script>
+
+</body>
+</html>
