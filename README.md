@@ -1,6 +1,6 @@
 # This is a DIY automatic cat litter box.
 
-## 3/8/2025 update: V2 is now ready, way more capable, and it now supports pellets, it does the sifting part automatically. Documantation uptate will follow. 
+### 3/8/2025 update: V2 is now ready, way more capable, and it now supports pellets, it does the sifting part automatically. Documentation uptate will follow. 
 
 ## Keynotes:
 1. Battery powered.
