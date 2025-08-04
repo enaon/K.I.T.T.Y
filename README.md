@@ -25,7 +25,7 @@ A how-to with photos can be found on this Greek forum thread:
 https://www.phorum.com.gr/viewtopic.php?f=43&t=50568
 
 The toilet can be updated from a phone/pc using this web Page (is served from this repository)
-https://enaon.github.io/K.I.T.T.Y/kitty.html
+https://enaon.github.io/K.I.T.T.Y/loader.html
 
 The toilet can be controled from a phone/pc using this web page (is served from this repository)
 https://enaon.github.io/K.I.T.T.Y/control.html
