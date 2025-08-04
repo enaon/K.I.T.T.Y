@@ -87,16 +87,13 @@
 		"storage": [
 			{"name":"ew_handler","url":"../magic3/handler/handler.js"},
 			{"name":"ew_handler_face","url":"../magic3/handler/handler_face.js"},
-			{"name":"ew_handler_fonts","url":"../magic3/handler/handler_fonts.js"},
 			{"name":"ew_handler_notify","url":"../magic3/handler/handler_notify.js"},
 			{"name":"ew_handler_set","url":"../magic3/handler/handler_set.js"},
 			{"name":"ew_handler_btn","url":"../magic3/handler/handler_btn.js"},
 			{"name":"ew_handler_conn","url":"../magic3/handler/handler_conn.js"},
-			{"name":"ew_handler_cron","url":"../magic3/handler/handler_cron.js"},
 			{"name":"ew_handler_touch","url":"../magic3/handler/handler_touch.js"},
 			{"name":"ew_handler_touch_716","url":"../magic3/handler/handler_touch_716.js"},
-			{"name":"ew_handler_acc_SC7A20","url":"../magic3/handler/handler_acc_SC7A20.js"},
-			{"name":"ew_handler_buzz","url":"../magic3/handler/handler_buzz.js"}			
+			{"name":"ew_handler_acc_SC7A20","url":"../magic3/handler/handler_acc_SC7A20.js"}
 		]
 	},
 	{ "id": "ew_UI",
