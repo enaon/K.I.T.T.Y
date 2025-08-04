@@ -7,8 +7,8 @@ Serial1.unsetup();
 pinMode(D22, "opendrain", true);
 pinMode(D23, "opendrain", true);
 
-//scata app
-scata = {
+//kitty app
+kitty = {
   state: {
     is: {
       sys: { busy: 0, run: 0, pause: 0, tap: 0, pwr: 0, cnt: 0, abort: 0 },
@@ -18,23 +18,23 @@ scata = {
       tof: { dist: 0, per: 0, state: "na" }
     },
     print: function() {
-      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "lt=" + scata.state.is.volt.litres, notify: true } } });
-      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "rtod=" + scata.state.is.sys.run, notify: true } } });
-      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "rtot=" + (scata.state.is.sys.run + scata.state.def.is.total), notify: true } } });
-      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "ps=" + scata.state.is.sys.pause, notify: true } } });
-      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "sp=" + scata.state.def.is.sand, notify: true } } });
-      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "ss=" + (19 - (scata.state.def.sandType[scata.state.def.is.sand].speed * 10)), notify: true } } });
-      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "ac=" + scata.state.def.auto.clean, notify: true } } });
-      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "ad=" + scata.state.def.auto.delay, notify: true } } });
-      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "au=" + scata.state.def.auto.uvc, notify: true } } });
+      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "lt=" + kitty.state.is.volt.litres, notify: true } } });
+      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "rtod=" + kitty.state.is.sys.run, notify: true } } });
+      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "rtot=" + (kitty.state.is.sys.run + kitty.state.def.is.total), notify: true } } });
+      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "ps=" + kitty.state.is.sys.pause, notify: true } } });
+      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "sp=" + kitty.state.def.is.sand, notify: true } } });
+      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "ss=" + (19 - (kitty.state.def.sandType[kitty.state.def.is.sand].speed * 10)), notify: true } } });
+      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "ac=" + kitty.state.def.auto.clean, notify: true } } });
+      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "ad=" + kitty.state.def.auto.delay, notify: true } } });
+      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "au=" + kitty.state.def.auto.uvc, notify: true } } });
       NRF.updateServices({ 0xffa0: { 0xffa2: { value: "vp=" + ew.is.ondcVoltage(), notify: true } } });
       NRF.updateServices({ 0xffa0: { 0xffa2: { value: "pp=" + ew.is.ondcVoltage(1), notify: true } } });
       NRF.updateServices({ 0xffa0: { 0xffa2: { value: "vc=" + ew.is.batt(), notify: true } } });
       NRF.updateServices({ 0xffa0: { 0xffa2: { value: "dt=" + Date().toString().split(' ')[4], notify: true } } });
-      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "pwr=" + scata.state.is.sys.pwr, notify: true } } });
-      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "busy=" + scata.state.is.sys.busy, notify: true } } });
+      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "pwr=" + kitty.state.is.sys.pwr, notify: true } } });
+      NRF.updateServices({ 0xffa0: { 0xffa2: { value: "busy=" + kitty.state.is.sys.busy, notify: true } } });
     },
-    update: function() { require('Storage').write('scata.json', scata.state.def); }
+    update: function() { require('Storage').write('kitty.json', kitty.state.def); }
   },
   call: {
     move: function(pin, pos, range) {
@@ -44,198 +44,198 @@ scata = {
       analogWrite(pin, (i + pos) / 50.0, { freq: 20, soft: true });
     },
     go: function(i) {
-      if (ew.tid.scataI) {
-        clearInterval(ew.tid.scataI);
-        ew.tid.scataI = 0;
+      if (ew.tid.kittyI) {
+        clearInterval(ew.tid.kittyI);
+        ew.tid.kittyI = 0;
       }
-      if (scata.dbg) console.log("go start", i, scata.state.is.pos);
-      scata.state.is.sys.abort = 0;
-      scata.state.is.pos.flip = 0;
-      scata.state.is.pos.dir = 0;
+      if (kitty.dbg) console.log("go start", i, kitty.state.is.pos);
+      kitty.state.is.sys.abort = 0;
+      kitty.state.is.pos.flip = 0;
+      kitty.state.is.pos.dir = 0;
       if (!i.speed) i.speed = 100;
-      scata.state.is.volt.base = ew.is.ondcVoltage();
-      if (i.act == "Emptying") scata.state.is.volt.min = scata.state.is.volt.base;
+      kitty.state.is.volt.base = ew.is.ondcVoltage();
+      if (i.act == "Emptying") kitty.state.is.volt.min = kitty.state.is.volt.base;
       //messasge
       if (i.act) {
         ew.oled.msg(i.act, 1);
-        if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString(i.act), notify: true } } });
+        if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString(i.act), notify: true } } });
       }
       //loop
-      ew.tid.scataI = setInterval(() => {
-        if (i.act == "Emptying" && (ew.is.ondcVoltage() < scata.state.is.volt.min)) {
-          scata.state.is.volt.min = ew.is.ondcVoltage();
+      ew.tid.kittyI = setInterval(() => {
+        if (i.act == "Emptying" && (ew.is.ondcVoltage() < kitty.state.is.volt.min)) {
+          kitty.state.is.volt.min = ew.is.ondcVoltage();
         }
-        if (scata.dbg) console.log("inside loop", i, scata.state.is.pos);
+        if (kitty.dbg) console.log("inside loop", i, kitty.state.is.pos);
 
         //set custom movement speed
-        if (i.act != "Locking") changeInterval(ew.tid.scataI, i.speed * scata.state.def.sandType[scata.state.def.is.sand].speed);
+        if (i.act != "Locking") changeInterval(ew.tid.kittyI, i.speed * kitty.state.def.sandType[kitty.state.def.is.sand].speed);
         //direction
-        if (!scata.state.is.pos.flip) {
-          if (!scata.state.is.pos.dir) scata.state.is.pos.dir = (scata.state.is.pos.ball <= i.one) ? "up" : "dn";
-          if (scata.state.is.pos.dir == "up" && i.one <= scata.state.is.pos.ball)
-            scata.state.is.pos.flip = 1;
-          else if (scata.state.is.pos.dir == "dn" && scata.state.is.pos.ball <= i.one)
-            scata.state.is.pos.flip = 1;
+        if (!kitty.state.is.pos.flip) {
+          if (!kitty.state.is.pos.dir) kitty.state.is.pos.dir = (kitty.state.is.pos.ball <= i.one) ? "up" : "dn";
+          if (kitty.state.is.pos.dir == "up" && i.one <= kitty.state.is.pos.ball)
+            kitty.state.is.pos.flip = 1;
+          else if (kitty.state.is.pos.dir == "dn" && kitty.state.is.pos.ball <= i.one)
+            kitty.state.is.pos.flip = 1;
         }
-        else scata.state.is.pos.dir = 0;
-        if (scata.state.is.pos.flip == 1 && !i.two) scata.state.is.pos.flip = 3;
-        else if (scata.state.is.pos.flip == 1 && (scata.state.is.pos.ball <= i.two || scata.state.is.pos.ball <= 0.01)) scata.state.is.pos.flip = i.three ? 2 : 3;
-        else if (scata.state.is.pos.flip == 2 && i.three <= scata.state.is.pos.ball) scata.state.is.pos.flip = 3;
-        if (scata.state.is.pos.flip == 3) {
-          clearInterval(ew.tid.scataI);
-          ew.tid.scataI = 0;
+        else kitty.state.is.pos.dir = 0;
+        if (kitty.state.is.pos.flip == 1 && !i.two) kitty.state.is.pos.flip = 3;
+        else if (kitty.state.is.pos.flip == 1 && (kitty.state.is.pos.ball <= i.two || kitty.state.is.pos.ball <= 0.01)) kitty.state.is.pos.flip = i.three ? 2 : 3;
+        else if (kitty.state.is.pos.flip == 2 && i.three <= kitty.state.is.pos.ball) kitty.state.is.pos.flip = 3;
+        if (kitty.state.is.pos.flip == 3) {
+          clearInterval(ew.tid.kittyI);
+          ew.tid.kittyI = 0;
           if (i.act == "Emptying") {
-            if (scata.state.def.auto.uvc) scata.state.is.auto.uvc = 1;
-            scata.state.is.volt.drop = scata.state.is.volt.base - scata.state.is.volt.min;
-            scata.state.is.volt.litres = (scata.state.is.volt.drop * (40 - (scata.state.is.volt.drop * 50))).toFixed(1);
+            if (kitty.state.def.auto.uvc) kitty.state.is.auto.uvc = 1;
+            kitty.state.is.volt.drop = kitty.state.is.volt.base - kitty.state.is.volt.min;
+            kitty.state.is.volt.litres = (kitty.state.is.volt.drop * (40 - (kitty.state.is.volt.drop * 50))).toFixed(1);
           }
-          if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString(i.act + " done"), notify: true } } });
+          if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString(i.act + " done"), notify: true } } });
           if (i.next) {
-            if (i.hold) setTimeout(() => { scata.action[i.next](); }, i.hold * 1000);
-            else scata.action[i.next]();
+            if (i.hold) setTimeout(() => { kitty.action[i.next](); }, i.hold * 1000);
+            else kitty.action[i.next]();
           }
           return;
         }
         //recovery
-        if (scata.state.def.is.voltMon && (ew.is.ondcVoltage() <= scata.state.def.is.fail || scata.state.is.sys.abort)) {
-          scata.state.is.volt.failed = ew.is.ondcVoltage();
-          if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("power down-recovery"), notify: true } } });
-          clearInterval(ew.tid.scataI);
-          ew.tid.scataI = 0;
-          if (!scata.state.is.sys.abort) {
-            scata.state.is.pos.ball = scata.state.is.pos.ball + (scata.state.is.pos.flip == 1 ? 0.25 : -0.25);
-            scata.call.move(D22, scata.state.is.pos.ball, 1);
+        if (kitty.state.def.is.voltMon && (ew.is.ondcVoltage() <= kitty.state.def.is.fail || kitty.state.is.sys.abort)) {
+          kitty.state.is.volt.failed = ew.is.ondcVoltage();
+          if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("power down-recovery"), notify: true } } });
+          clearInterval(ew.tid.kittyI);
+          ew.tid.kittyI = 0;
+          if (!kitty.state.is.sys.abort) {
+            kitty.state.is.pos.ball = kitty.state.is.pos.ball + (kitty.state.is.pos.flip == 1 ? 0.25 : -0.25);
+            kitty.call.move(D22, kitty.state.is.pos.ball, 1);
           }
-          if (ew.tid.scataT) {
-            clearTimeout(ew.tid.scataT);
-            ew.tid.scataT = 0;
+          if (ew.tid.kittyT) {
+            clearTimeout(ew.tid.kittyT);
+            ew.tid.kittyT = 0;
           }
-          ew.tid.scataT = setTimeout(() => {
-            ew.tid.scataT = 0;
-            scata.call.wake("sand", "recovery");
+          ew.tid.kittyT = setTimeout(() => {
+            ew.tid.kittyT = 0;
+            kitty.call.wake("sand", "recovery");
           }, 1500);
         }
         //movement
-        else if (!scata.state.is.sys.pause && scata.state.is.pos.flip != 3) {
-          if ((i.act == "Locking" || i.act == "Release") && 0.07 <= scata.state.is.volt.base - ew.is.ondcVoltage() && scata.state.is.pos.flip == 1)
-            scata.state.is.pos.flip = 2;
-          //scata.state.is.pos.ball = scata.state.is.pos.ball + (scata.state.is.pos.flip == 1 ? -0.01 : 0.01);
-          scata.state.is.pos.ball = scata.state.is.pos.ball + (scata.state.is.pos.flip == 1 ? -0.01 : scata.state.is.pos.dir == "dn" ? -0.01 : 0.01);
-          //console.log(i.act,scata.state.is.pos.dir,scata.state.is.pos.flip, scata.state.is.pos.ball);
-          if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa2: { value: "pos=" + (scata.state.is.pos.ball * 100).toString(), notify: true } } });
-          scata.call.move(D22, scata.state.is.pos.ball, 1);
+        else if (!kitty.state.is.sys.pause && kitty.state.is.pos.flip != 3) {
+          if ((i.act == "Locking" || i.act == "Release") && 0.07 <= kitty.state.is.volt.base - ew.is.ondcVoltage() && kitty.state.is.pos.flip == 1)
+            kitty.state.is.pos.flip = 2;
+          //kitty.state.is.pos.ball = kitty.state.is.pos.ball + (kitty.state.is.pos.flip == 1 ? -0.01 : 0.01);
+          kitty.state.is.pos.ball = kitty.state.is.pos.ball + (kitty.state.is.pos.flip == 1 ? -0.01 : kitty.state.is.pos.dir == "dn" ? -0.01 : 0.01);
+          //console.log(i.act,kitty.state.is.pos.dir,kitty.state.is.pos.flip, kitty.state.is.pos.ball);
+          if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa2: { value: "pos=" + (kitty.state.is.pos.ball * 100).toString(), notify: true } } });
+          kitty.call.move(D22, kitty.state.is.pos.ball, 1);
         }
 
       }, i.speed);
     },
     wake: function(i, e) {
-      scata.action.count("stop");
-      if (ew.tid.scataT) {
-        clearTimeout(ew.tid.scataT);
-        ew.tid.scataT = 0;
+      kitty.action.count("stop");
+      if (ew.tid.kittyT) {
+        clearTimeout(ew.tid.kittyT);
+        ew.tid.kittyT = 0;
       }
       if (e && e != "recovery" && ew.is.ondcVoltage() < 3.35) {
         if (3 <= ew.is.ondcVoltage()) {
-          if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("low battery"), notify: true } } });
+          if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("low battery"), notify: true } } });
           ew.oled.msg("Low Battery");
         }
         else {
-          if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("no drawer/power"), notify: true } } });
+          if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("no drawer/power"), notify: true } } });
           ew.oled.msg("No Drawer/Power");
         }
-        if (scata.state.def.is.voltMon) return;
+        if (kitty.state.def.is.voltMon) return;
       }
       
       if (ew.is.ondcVoltage() <= 4.4 && 3.3 <= ew.is.ondcVoltage()) {
-        if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("waking up"), notify: true } } });
+        if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("waking up"), notify: true } } });
         ew.oled.msg("Waking up");
         digitalPulse(D23, 1, [200, 100, 200]);
       }
       else if (4.4 <= ew.is.ondcVoltage()) {
-        if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("power already on"), notify: true } } });
-        scata.state.is.sys.pwr = 1;
+        if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("power already on"), notify: true } } });
+        kitty.state.is.sys.pwr = 1;
         if (i) {
-          //if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("starting " + i + " " + (e ? e : "")), notify: true } } });
+          //if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("starting " + i + " " + (e ? e : "")), notify: true } } });
 
-          scata.action[i](e ? e : "");
-        } //else  scata.state.is.sys.busy = 0;
+          kitty.action[i](e ? e : "");
+        } //else  kitty.state.is.sys.busy = 0;
         return;
       }
-      if (ew.tid.scataI) {
-        clearInterval(ew.tid.scataI);
-        ew.tid.scataI = 0;
+      if (ew.tid.kittyI) {
+        clearInterval(ew.tid.kittyI);
+        ew.tid.kittyI = 0;
       }
-      ew.tid.scataI = setInterval(() => {
-        if (4.4 <= ew.is.ondcVoltage() || !scata.state.def.is.voltMon) {
-          scata.state.is.sys.pwr = 1;
-          if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("power is on"), notify: true } } });
+      ew.tid.kittyI = setInterval(() => {
+        if (4.4 <= ew.is.ondcVoltage() || !kitty.state.def.is.voltMon) {
+          kitty.state.is.sys.pwr = 1;
+          if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("power is on"), notify: true } } });
           //  
-          if (ew.tid.scataT) {
-            clearTimeout(ew.tid.scataT);
-            ew.tid.scataT = 0;
+          if (ew.tid.kittyT) {
+            clearTimeout(ew.tid.kittyT);
+            ew.tid.kittyT = 0;
           }
-          clearInterval(ew.tid.scataI);
-          ew.tid.scataI = 0;
+          clearInterval(ew.tid.kittyI);
+          ew.tid.kittyI = 0;
           if (i) {
-            //if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("starting " + i + " " + (e ? e : "")), notify: true } } });
-            scata.action[i](e ? e : "");
-          } //else  scata.state.is.sys.busy = 0;
+            //if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("starting " + i + " " + (e ? e : "")), notify: true } } });
+            kitty.action[i](e ? e : "");
+          } //else  kitty.state.is.sys.busy = 0;
         }
         else if (3 <= ew.is.ondcVoltage()) {
-          if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("waiting for power"), notify: true } } });
+          if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("waiting for power"), notify: true } } });
           digitalPulse(D23, 1, 500);
         }
         else {
-          if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("Drawer missing"), notify: true } } });
+          if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("Drawer missing"), notify: true } } });
           ew.oled.msg("Drawer missing");
         }
       }, 1500);
     },
     unlock: function(mode) {
-      if (ew.tid.scataI) clearInterval(ew.tid.scataI);
+      if (ew.tid.kittyI) clearInterval(ew.tid.kittyI);
 
       let c = 0.95;
-      ew.tid.scataI = setInterval(() => {
-        scata.call.move(D23, c);
+      ew.tid.kittyI = setInterval(() => {
+        kitty.call.move(D23, c);
         c = c - 0.01;
         if (c <= 0.01) {
-          clearInterval(ew.tid.scataI);
-          ew.tid.scataI = 0;
+          clearInterval(ew.tid.kittyI);
+          ew.tid.kittyI = 0;
           if (mode)
-            scata.call.go({ one: 0.52 + scata.state.def.is.clb, two: 0.15 + scata.state.def.is.clb, three: 0.38 + scata.state.def.is.clb, act: "Release", next: mode });
+            kitty.call.go({ one: 0.52 + kitty.state.def.is.clb, two: 0.15 + kitty.state.def.is.clb, three: 0.38 + kitty.state.def.is.clb, act: "Release", next: mode });
         }
       }, 20);
     }
   },
   action: {
     count: function(i) {
-      if (ew.tid.scataI) {
-        clearInterval(ew.tid.scataI);
-        ew.tid.scataI = 0;
-        scata.state.is.sys.cnt = 0;
+      if (ew.tid.kittyI) {
+        clearInterval(ew.tid.kittyI);
+        ew.tid.kittyI = 0;
+        kitty.state.is.sys.cnt = 0;
       }
       if (i) {
-        if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("Clear counter"), notify: true } } });
+        if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("Clear counter"), notify: true } } });
         return;
       }
       else {
-        if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("Start counter"), notify: true } } });
+        if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("Start counter"), notify: true } } });
       }
-      let v = 60 * scata.state.def.auto.delay;
-      //scata.state.is.sys.busy = 0;
+      let v = 60 * kitty.state.def.auto.delay;
+      //kitty.state.is.sys.busy = 0;
       ew.oled.msg("Hello Kitty");
-      ew.tid.scataI = setInterval(() => {
+      ew.tid.kittyI = setInterval(() => {
         v--;
-        ew.oled.msg((60 * scata.state.def.auto.delay - 3 <= v) ? "Hello Kitty" : "Empty in " + v);
-        scata.state.is.sys.cnt = v;
-        if (v == (scata.state.def.auto.delay * 60) - 40)
+        ew.oled.msg((60 * kitty.state.def.auto.delay - 3 <= v) ? "Hello Kitty" : "Empty in " + v);
+        kitty.state.is.sys.cnt = v;
+        if (v == (kitty.state.def.auto.delay * 60) - 40)
           digitalPulse(D23, 0, [200, 300, 200, 300, 200]);
         else if (v <= 0) {
-          clearInterval(ew.tid.scataI);
-          ew.tid.scataI = 0;
-          scata.state.is.sys.cnt = 0;
-          if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("Counter expired"), notify: true } } });
-          scata.call.wake("sand", "clean");
+          clearInterval(ew.tid.kittyI);
+          ew.tid.kittyI = 0;
+          kitty.state.is.sys.cnt = 0;
+          if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("Counter expired"), notify: true } } });
+          kitty.call.wake("sand", "clean");
         }
         else if (v <= 5) {
           acc.sleep();
@@ -244,108 +244,108 @@ scata = {
       }, 1000);
     },
     sand: function(mode) {
-      // if (scata.state.is.sys.busy) return;
-      scata.state.is.sys.busy = 1;
-      //scata.state.is.volt.base = ew.is.ondcVoltage();
-      if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("Acc sleep"), notify: true } } });
+      // if (kitty.state.is.sys.busy) return;
+      kitty.state.is.sys.busy = 1;
+      //kitty.state.is.volt.base = ew.is.ondcVoltage();
+      if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("Acc sleep"), notify: true } } });
       if (mode == "clean") {
-        scata.state.is.sys.run++;
-        scata.state.def.is.total++;
-        mode = scata.state.def.sandType[scata.state.def.is.sand].name;
+        kitty.state.is.sys.run++;
+        kitty.state.def.is.total++;
+        mode = kitty.state.def.sandType[kitty.state.def.is.sand].name;
       }
-      else if (mode == "empty") scata.state.is.sys.run = 0;
-      if (mode) scata.call.unlock(mode);
+      else if (mode == "empty") kitty.state.is.sys.run = 0;
+      if (mode) kitty.call.unlock(mode);
     },
     
     //ball movement patterns
     // trigger uvc light
-    uvc: () => { scata.call.go({ one: 0.85 + scata.state.def.is.clb, two: 0.65, act: "Turn on UVC", next: "lock", speed: 70 }); },
+    uvc: () => { kitty.call.go({ one: 0.85 + kitty.state.def.is.clb, two: 0.65, act: "Turn on UVC", next: "lock", speed: 70 }); },
     // fine grain betonite sand
-    betonite: () => { scata.call.go({ one: 1 + scata.state.def.is.clb, two: 0.01, three: 2 + scata.state.def.is.clb, act: "Empty", hold: 2, next: "betonite1", speed: 100 }); },
-    betonite1: () => { scata.call.go({ one: 0.01, act: "Level", hold: 3, next: "betonite2", speed: 100 }); },
-    betonite2: () => { scata.call.go({ one: 0.70 + scata.state.def.is.clb, act: "Return", next: "lock", speed: 100 }); },
+    betonite: () => { kitty.call.go({ one: 1 + kitty.state.def.is.clb, two: 0.01, three: 2 + kitty.state.def.is.clb, act: "Empty", hold: 2, next: "betonite1", speed: 100 }); },
+    betonite1: () => { kitty.call.go({ one: 0.01, act: "Level", hold: 3, next: "betonite2", speed: 100 }); },
+    betonite2: () => { kitty.call.go({ one: 0.70 + kitty.state.def.is.clb, act: "Return", next: "lock", speed: 100 }); },
     // standard non-stick sand
-    nonstick: () => { scata.call.go({ one: 1 + scata.state.def.is.clb, two: 0.01, three: 1.2, act: "Preparing", next: "nonstick_1", speed: 50 }); },
-    nonstick_1: () => { scata.call.go({ one: 1.4 + scata.state.def.is.clb, two: 1.35, three: 1.4, act: "Step 1", act2: "Returning", next: "nonstick_2", speed: 80 }); },
-    nonstick_2: () => { scata.call.go({ one: 1.5 + scata.state.def.is.clb, two: 1.45, three: 1.5, act: "Step 2", act2: "Returning", next: "nonstick_3", speed: 80 }); },
-    nonstick_3: () => { scata.call.go({ one: 1.6 + scata.state.def.is.clb, two: 1.55, three: 1.6, act: "Step 3", act2: "Returning", next: "nonstick_4", speed: 80 }); },
-    nonstick_4: () => { scata.call.go({ one: 1.7 + scata.state.def.is.clb, two: 1.65, three: 1.95, act: "Step 4", act2: "Returning", next: "nonstick_5", speed: 50 }); },
-    nonstick_5: () => { scata.call.go({ one: 2 + scata.state.def.is.clb, two: 1.95, act: "Return", act2: "Returning", next: "nonstick_6", speed: 150 }); },
-    nonstick_6: () => { scata.call.go({ one: 2 + scata.state.def.is.clb, two: 0.01, act: "Emptying", next: "nonstick_7", speed: 50 }); },
-    nonstick_7: () => { scata.call.go({ one: 0.05, two: 0.01, act: "wait", next: "nonstick_8", speed: 100 }); },
-    nonstick_8: () => { scata.call.go({ one: 1 + scata.state.def.is.clb, two: 0.01, three: 0.70 + scata.state.def.is.clb, act: "end", next: "lock", speed: 50 }); },
+    nonstick: () => { kitty.call.go({ one: 1 + kitty.state.def.is.clb, two: 0.01, three: 1.2, act: "Preparing", next: "nonstick_1", speed: 50 }); },
+    nonstick_1: () => { kitty.call.go({ one: 1.4 + kitty.state.def.is.clb, two: 1.35, three: 1.4, act: "Step 1", act2: "Returning", next: "nonstick_2", speed: 80 }); },
+    nonstick_2: () => { kitty.call.go({ one: 1.5 + kitty.state.def.is.clb, two: 1.45, three: 1.5, act: "Step 2", act2: "Returning", next: "nonstick_3", speed: 80 }); },
+    nonstick_3: () => { kitty.call.go({ one: 1.6 + kitty.state.def.is.clb, two: 1.55, three: 1.6, act: "Step 3", act2: "Returning", next: "nonstick_4", speed: 80 }); },
+    nonstick_4: () => { kitty.call.go({ one: 1.7 + kitty.state.def.is.clb, two: 1.65, three: 1.95, act: "Step 4", act2: "Returning", next: "nonstick_5", speed: 50 }); },
+    nonstick_5: () => { kitty.call.go({ one: 2 + kitty.state.def.is.clb, two: 1.95, act: "Return", act2: "Returning", next: "nonstick_6", speed: 150 }); },
+    nonstick_6: () => { kitty.call.go({ one: 2 + kitty.state.def.is.clb, two: 0.01, act: "Emptying", next: "nonstick_7", speed: 50 }); },
+    nonstick_7: () => { kitty.call.go({ one: 0.05, two: 0.01, act: "wait", next: "nonstick_8", speed: 100 }); },
+    nonstick_8: () => { kitty.call.go({ one: 1 + kitty.state.def.is.clb, two: 0.01, three: 0.70 + kitty.state.def.is.clb, act: "end", next: "lock", speed: 50 }); },
 
     // light crystalic silicone sand
-    silicone: () => { scata.call.go({ one: 1 + scata.state.def.is.clb, two: 0.01, three: 1.2, act: "Preparing", next: "silicone1", speed: 80 }); },
-    silicone1: () => { scata.call.go({ one: 1.4 + scata.state.def.is.clb, two: 1.35, three: 1.4, act: "Step 1", act2: "Returning", next: "silicone2", speed: 100 }); },
-    silicone2: () => { scata.call.go({ one: 1.5 + scata.state.def.is.clb, two: 1.45, three: 1.5, act: "Step 2", act2: "Returning", next: "silicone3", speed: 100 }); },
-    silicone3: () => { scata.call.go({ one: 1.6 + scata.state.def.is.clb, two: 1.55, three: 1.6, act: "Step 3", act2: "Returning", next: "silicone4", speed: 100 }); },
-    silicone4: () => { scata.call.go({ one: 1.7 + scata.state.def.is.clb, two: 1.65, three: 1.7, act: "Step 4", act2: "Returning", next: "silicone5", speed: 100 }); },
-    silicone5: () => { scata.call.go({ one: 2 + scata.state.def.is.clb, two: 0.01, three: 0.65, act: "step5", act2: "Returning", next: "silicone6", speed: 100 }); },
-    silicone6: () => { scata.call.go({ one: 1 + scata.state.def.is.clb, two: 0.01, three: 0.70 + scata.state.def.is.clb, act: "Emptying", act2: "Returning", next: "lock", speed: 100 }); },
+    silicone: () => { kitty.call.go({ one: 1 + kitty.state.def.is.clb, two: 0.01, three: 1.2, act: "Preparing", next: "silicone1", speed: 80 }); },
+    silicone1: () => { kitty.call.go({ one: 1.4 + kitty.state.def.is.clb, two: 1.35, three: 1.4, act: "Step 1", act2: "Returning", next: "silicone2", speed: 100 }); },
+    silicone2: () => { kitty.call.go({ one: 1.5 + kitty.state.def.is.clb, two: 1.45, three: 1.5, act: "Step 2", act2: "Returning", next: "silicone3", speed: 100 }); },
+    silicone3: () => { kitty.call.go({ one: 1.6 + kitty.state.def.is.clb, two: 1.55, three: 1.6, act: "Step 3", act2: "Returning", next: "silicone4", speed: 100 }); },
+    silicone4: () => { kitty.call.go({ one: 1.7 + kitty.state.def.is.clb, two: 1.65, three: 1.7, act: "Step 4", act2: "Returning", next: "silicone5", speed: 100 }); },
+    silicone5: () => { kitty.call.go({ one: 2 + kitty.state.def.is.clb, two: 0.01, three: 0.65, act: "step5", act2: "Returning", next: "silicone6", speed: 100 }); },
+    silicone6: () => { kitty.call.go({ one: 1 + kitty.state.def.is.clb, two: 0.01, three: 0.70 + kitty.state.def.is.clb, act: "Emptying", act2: "Returning", next: "lock", speed: 100 }); },
     // empty sand
-    empty: () => { scata.call.go({ one: 2 + scata.state.def.is.clb, two: 0.65, act: "Emptying Sand", next: "empty1" }); },
-    empty1: () => { scata.call.go({ one: 2 + scata.state.def.is.clb, two: 0.65, act: "Take 2", next: "empty2", speed: 50 }); },
-    empty2: () => { scata.call.go({ one: 2 + scata.state.def.is.clb, two: 0.65, act: "Take 3", next: "empty3", speed: 50 }); },
-    empty3: () => { scata.call.go({ one: 2, two: 0.70 + scata.state.def.is.clb, act: "Returning", next: "lock", speed: 100 }); },
+    empty: () => { kitty.call.go({ one: 2 + kitty.state.def.is.clb, two: 0.65, act: "Emptying Sand", next: "empty1" }); },
+    empty1: () => { kitty.call.go({ one: 2 + kitty.state.def.is.clb, two: 0.65, act: "Take 2", next: "empty2", speed: 50 }); },
+    empty2: () => { kitty.call.go({ one: 2 + kitty.state.def.is.clb, two: 0.65, act: "Take 3", next: "empty3", speed: 50 }); },
+    empty3: () => { kitty.call.go({ one: 2, two: 0.70 + kitty.state.def.is.clb, act: "Returning", next: "lock", speed: 100 }); },
     recovery: () => {
-      scata.call.go({ one: 0.45, two: 0.01, three: 0.70 + scata.state.def.is.clb, act: "recover", next: "lock" });
+      kitty.call.go({ one: 0.45, two: 0.01, three: 0.70 + kitty.state.def.is.clb, act: "recover", next: "lock" });
     },
     lock: function() {
-      if (ew.tid.scataI) clearInterval(ew.tid.scataI);
+      if (ew.tid.kittyI) clearInterval(ew.tid.kittyI);
       let c = 0.01;
-      ew.tid.scataI = setInterval(() => {
-        scata.call.move(D23, c);
+      ew.tid.kittyI = setInterval(() => {
+        kitty.call.move(D23, c);
         c = c + 0.01;
         if (0.95 <= c) {
-          if (scata.dbg) console.log("lock pos c:", c);
-          clearInterval(ew.tid.scataI);
-          ew.tid.scataI = 0;
-          scata.call.go({ one: 0.70 + scata.state.def.is.clb, two: 0.18 + scata.state.def.is.clb, three: 0.45 + scata.state.def.is.clb, act: "Locking", next: "sleep" });
+          if (kitty.dbg) console.log("lock pos c:", c);
+          clearInterval(ew.tid.kittyI);
+          ew.tid.kittyI = 0;
+          kitty.call.go({ one: 0.70 + kitty.state.def.is.clb, two: 0.18 + kitty.state.def.is.clb, three: 0.45 + kitty.state.def.is.clb, act: "Locking", next: "sleep" });
         }
       }, 50);
     },
     //
     sleep: function() {
-      if (ew.tid.scataT) { clearTimeout(ew.tid.scataT);
-        ew.tid.scataT = 0; }
-      if (ew.tid.scataI) { clearInterval(ew.tid.scataI);
-        ew.tid.scataI = 0; }
+      if (ew.tid.kittyT) { clearTimeout(ew.tid.kittyT);
+        ew.tid.kittyT = 0; }
+      if (ew.tid.kittyI) { clearInterval(ew.tid.kittyI);
+        ew.tid.kittyI = 0; }
       ew.oled.msg("Going to Sleep");
       D22.reset(); //stop PWM module
       digitalPulse(D23, 1, [500, 100, 500, 100]);
-      if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("going to sleep"), notify: true } } });
-      ew.tid.scataT = setTimeout(() => {
-        ew.tid.scataT = 0;
+      if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("going to sleep"), notify: true } } });
+      ew.tid.kittyT = setTimeout(() => {
+        ew.tid.kittyT = 0;
         if (3 <= ew.is.ondcVoltage() && ew.is.ondcVoltage() <= 4.4) {
-          if (scata.dbg) console.log("sleep ok");
-          scata.state.is.sys.pwr = 0;
+          if (kitty.dbg) console.log("sleep ok");
+          kitty.state.is.sys.pwr = 0;
           //poke32(0x50000700 + 22 * 4, 2);
           //poke32(0x50000700 + 23 * 4, 2);
-          if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("sleeping"), notify: true } } });
-          ew.tid.scataT = setTimeout(() => {
-            ew.tid.scataT = 0;
-            if (scata.dbg) console.log("sleep done, bye");
-            if (scata.state.def.auto.clean) acc.wake(1);
-            if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("acc wake"), notify: true } } });
-            if (scata.state.is.auto.uvc) {
-              if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("uvc scheduled"), notify: true } } });
-              scata.state.is.auto.uvc = 0;
-              ew.tid.scataT = setTimeout(() => {
-                ew.tid.scataT = 0;
-                scata.call.wake("sand", "uvc");
+          if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("sleeping"), notify: true } } });
+          ew.tid.kittyT = setTimeout(() => {
+            ew.tid.kittyT = 0;
+            if (kitty.dbg) console.log("sleep done, bye");
+            if (kitty.state.def.auto.clean) acc.wake(1);
+            if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("acc wake"), notify: true } } });
+            if (kitty.state.is.auto.uvc) {
+              if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("uvc scheduled"), notify: true } } });
+              kitty.state.is.auto.uvc = 0;
+              ew.tid.kittyT = setTimeout(() => {
+                ew.tid.kittyT = 0;
+                kitty.call.wake("sand", "uvc");
               }, 180000);
             }
-            scata.state.is.sys.busy = 0;
+            kitty.state.is.sys.busy = 0;
           }, 1500);
         }
         else {
           ew.oled.msg("Sleep failed");
-          if (scata.dbg) console.log("sleep failed, retry");
-          if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("no sleep"), notify: true } } });
-          ew.tid.scataT = setTimeout(() => {
-            ew.tid.scataT = 0;
-            scata.action.sleep();
+          if (kitty.dbg) console.log("sleep failed, retry");
+          if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("no sleep"), notify: true } } });
+          ew.tid.kittyT = setTimeout(() => {
+            ew.tid.kittyT = 0;
+            kitty.action.sleep();
           }, 2500);
         }
       }, 2000);
@@ -386,11 +386,11 @@ NRF.setServices({
 //BT
 ew.on("BTRXcmd", (i) => {
 
-  if (!scata.state.is.nrf) {
-    scata.state.is.nrf = 1;
+  if (!kitty.state.is.nrf) {
+    kitty.state.is.nrf = 1;
     if (ew.tid.nrf) clearInterval(ew.tid.nrf);
     ew.tid.nrf = setInterval(function() {
-      scata.state.print();
+      kitty.state.print();
     }, 1000);
   }
 
@@ -398,21 +398,21 @@ ew.on("BTRXcmd", (i) => {
     if (i == 11) ew.emit('button', 'short');
     else if (i == 12) ew.emit('button', 'long');
     else if (i == 13) ew.emit('button', 'triple');
-    else if (i == 14) scata.state.print();
+    else if (i == 14) kitty.state.print();
     else if (i.startsWith(16)) setTime(Number(i.split("=")[1] / 1000));
     else if (i.startsWith(17)) {
-      scata.state.def.is.tz = i.split("=")[1];
-      E.setTimeZone(scata.state.def.is.tz);
+      kitty.state.def.is.tz = i.split("=")[1];
+      E.setTimeZone(kitty.state.def.is.tz);
     }
-    else if (i == 18) scata.state.is.sys.abort = 1;
-    else if (i == 19) scata.state.update();
+    else if (i == 18) kitty.state.is.sys.abort = 1;
+    else if (i == 19) kitty.state.update();
   }
-  else if (i.startsWith(3)) scata.state.def.sandType[scata.state.def.is.sand].speed = (19 - (i - 30)) / 10;
-  else if (i.startsWith(4)) scata.state.def.is.sand = i - 40;
-  else if (i.startsWith(5)) scata.state.def.auto.uvc = i - 50;
-  else if (i.startsWith(6)) scata.state.def.auto.delay = i - 60;
-  else if (i.startsWith(7)) scata.state.def.auto.clean = i - 70;
-  else if (i.startsWith(8)) scata.state.is.sys.pause = i - 80;
+  else if (i.startsWith(3)) kitty.state.def.sandType[kitty.state.def.is.sand].speed = (19 - (i - 30)) / 10;
+  else if (i.startsWith(4)) kitty.state.def.is.sand = i - 40;
+  else if (i.startsWith(5)) kitty.state.def.auto.uvc = i - 50;
+  else if (i.startsWith(6)) kitty.state.def.auto.delay = i - 60;
+  else if (i.startsWith(7)) kitty.state.def.auto.clean = i - 70;
+  else if (i.startsWith(8)) kitty.state.is.sys.pause = i - 80;
 });
 
 NRF.on('disconnect', function() {
@@ -420,15 +420,15 @@ NRF.on('disconnect', function() {
     clearInterval(ew.tid.nrf);
     ew.tid.nrf = 0;
   }
-  scata.state.is.nrf = 0;
+  kitty.state.is.nrf = 0;
 });
 
 // button
 ew.on("button", (x) => {
-  if (scata.state.is.sys.busy) {
+  if (kitty.state.is.sys.busy) {
     if (x == "long") {
-      ew.oled.msg(scata.state.is.sys.pause ? "Resume" : "Pause", 1);
-      scata.state.is.sys.pause = 1 - scata.state.is.sys.pause;
+      ew.oled.msg(kitty.state.is.sys.pause ? "Resume" : "Pause", 1);
+      kitty.state.is.sys.pause = 1 - kitty.state.is.sys.pause;
       return;
     }
     buzzer(300);
@@ -436,21 +436,21 @@ ew.on("button", (x) => {
     return;
   }
   if (x == "double") {
-    ew.oled.msg(scata.state.is.sys.run + "-" + ew.is.batt(1) + " %", 1, ew.is.ondcVoltage(4) + "% - " + ew.is.ondcVoltage().toFixed(2) + "V");
+    ew.oled.msg(kitty.state.is.sys.run + "-" + ew.is.batt(1) + " %", 1, ew.is.ondcVoltage(4) + "% - " + ew.is.ondcVoltage().toFixed(2) + "V");
   }
   else if (x == "short") {
     ew.oled.msg(4.4 <= ew.is.ondcVoltage() ? "Going to sleep" : "Waiking up");
-    4.4 <= ew.is.ondcVoltage() ? scata.action.sleep() : scata.call.wake();
+    4.4 <= ew.is.ondcVoltage() ? kitty.action.sleep() : kitty.call.wake();
   }
   else if (x == "triple") {
     acc.sleep();
     buzzer([80, 80, 100, 80, 100]);
-    scata.call.wake("sand", "empty");
+    kitty.call.wake("sand", "empty");
   }
   else if (x == "long") {
     acc.sleep();
     buzzer([80, 80, 100]);
-    scata.call.wake("sand", "clean");
+    kitty.call.wake("sand", "clean");
   }
 });
 
@@ -458,20 +458,20 @@ ew.on("button", (x) => {
 acc.on("action", (x, y) => {
   if (BTN.read()) return;
   if (y == 1 || y == 2) {
-    if (ew.tid.scataT) {
-      clearTimeout(ew.tid.scataT);
-      ew.tid.scataT = 0;
+    if (ew.tid.kittyT) {
+      clearTimeout(ew.tid.kittyT);
+      ew.tid.kittyT = 0;
     }
-    ew.tid.scataT = setTimeout(() => {
-      ew.tid.scataT = 0;
-      scata.call.wake("count");
+    ew.tid.kittyT = setTimeout(() => {
+      ew.tid.kittyT = 0;
+      kitty.call.wake("count");
     }, 500);
   }
 });
 
 //defaults
-if (!require('Storage').read("scata.json")) {
-  scata.state.def = {
+if (!require('Storage').read("kitty.json")) {
+  kitty.state.def = {
     is: {
       sand: 1,
       fail: (ew.def.name == "eL-6f") ? 4.4 : 4.2,
@@ -494,15 +494,15 @@ if (!require('Storage').read("scata.json")) {
       4: { name: "tofu", speed: 1 }
     }
   };
-  scata.state.update();
+  kitty.state.update();
 }
-else scata.state.def = require('Storage').readJSON("scata.json");
+else kitty.state.def = require('Storage').readJSON("kitty.json");
 
 //auto save
 cron.on('hour', (x) => {
   if (x == 0) {
-    if (scata.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("auto save"), notify: true } } });
-    scata.state.is.sys.run = 0;
-    scata.state.update();
+    if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("auto save"), notify: true } } });
+    kitty.state.is.sys.run = 0;
+    kitty.state.update();
   }
 });

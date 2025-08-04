@@ -33,11 +33,11 @@
 		"name": "main",
 		"icon": "../icon.png",
 		"version":"1.94.2",
-		"description": "sCat-a main app",
+		"description": "K.I.T.T.Y main app",
 		"tags": "dsd6",
 	    "needsFeatures":["dsd6"],
 		"storage": [
-			{"name":"scata","url":"../dsd6/main.js"}
+			{"name":"kitty","url":"../dsd6/main.js"}
 		]
 	},
 

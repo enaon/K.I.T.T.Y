@@ -45,7 +45,7 @@ ew.resetSettings = function() {
 		cli: 1,
 		addr: NRF.getAddress(),
 		buzz: 1,
-		mode: "scata"
+		mode: "kitty"
 	};
 	ew.updateSettings();
 };

@@ -1,4 +1,4 @@
-//scat-a 
+//scale calibration face
 ew.UI.nav.next.replaceWith(() => {
 	ew.sys.buzz.nav(ew.sys.buzz.type.na);
 });

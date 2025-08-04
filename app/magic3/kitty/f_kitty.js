@@ -1,4 +1,4 @@
-//scat-a 
+//K.I.T.T.Y
 ew.UI.nav.next.replaceWith(() => {
 	ew.sys.buzz.nav(ew.sys.buzz.type.ok);
 	if (!ew.apps.kitty.state.def.is.scale) {

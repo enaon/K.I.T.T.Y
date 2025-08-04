@@ -1,5 +1,5 @@
-#### dsd6 Espruino scripts.
+####  Espruino scripts.
 
 
-#### [App Loader](https://enaon.github.io/scata/)
+#### [App Loader](https://enaon.github.io/K.I.T.T.Y/)
 

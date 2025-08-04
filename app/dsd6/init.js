@@ -67,7 +67,7 @@ if (BTN1.read() || require("Storage").read("devmode")) {
 }else{ //load in working mode
 	if (require('Storage').read('sysOled')) eval(require('Storage').read('sysOled')); 
 	if (require('Storage').read('handler')) eval(require('Storage').read('handler')); //call handler
-	if (require('Storage').read('scata')&&ew.def.mode=="scata") eval(require('Storage').read('scata')); //call scata
+	if (require('Storage').read('kitty')&&ew.def.mode=="kitty") eval(require('Storage').read('kitty')); //call kitty
 	if (require('Storage').read('powerbank')&&ew.def.mode=="powerbank") eval(require('Storage').read('powerbank')); //call powerbank
 	print("Welcome!\n*** WorkingMode ***\nLong hold the button\nto restart in DevMode");
 	buzzer(150);

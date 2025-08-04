@@ -101,7 +101,7 @@ ew.on("button", (x) => {
 
 acc.on("action", (x, y) => {
     //print("acc action:", x, y);
-    //if (y==1||y==2) (x=="double")?scata.tap=5:scata.tap++;  
+    //if (y==1||y==2) (x=="double")?kitty.tap=5:kitty.tap++;  
     digitalPulse(D22, 0, x == "double" ? powerbank.slot1.xiaomi ? [150, 100, 150, 1000, 150, 1000, 150, 100, 150] : [100, 100, 100] : 100);
     ew.oled.msg(x == "double" ? "Slot 1 OFF" : "Slot 1 ON", 1, ew.is.ondcVoltage(4) + "% - " + ew.is.ondcVoltage().toFixed(2) + "V");
     powerbank.slot1.state = x == "double" ? 0 : 1;
