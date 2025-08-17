@@ -4,8 +4,8 @@
 //setup
 E.setConsole(Bluetooth, { force: true });
 Serial1.unsetup();
-pinMode(D22, "opendrain", true);
-pinMode(D23, "opendrain", true);
+pinMode(D22, "opendrain");
+pinMode(D23, "opendrain");
 
 //kitty app
 kitty = {
@@ -41,7 +41,7 @@ kitty = {
       i = range ? 0.5 : 1;
       if (pos <= 0) pos = 0;
       if (pos >= 1 / i) pos = 1 / i;
-      analogWrite(pin, (i + pos) / 50.0, { freq: 20, soft: true });
+      analogWrite(pin, (i + pos) / 50.0, { freq: 20, soft : true });
     },
     go: function(i) {
       if (ew.tid.kittyI) {
@@ -84,6 +84,7 @@ kitty = {
         if (kitty.state.is.pos.flip == 3) {
           clearInterval(ew.tid.kittyI);
           ew.tid.kittyI = 0;
+          digitalWrite(D22,1);
           if (i.act == "Emptying") {
             if (kitty.state.def.auto.uvc) kitty.state.is.auto.uvc = 1;
             kitty.state.is.volt.drop = kitty.state.is.volt.base - kitty.state.is.volt.min;
@@ -111,6 +112,7 @@ kitty = {
             ew.tid.kittyT = 0;
           }
           ew.tid.kittyT = setTimeout(() => {
+            digitalWrite(D22,1);
             ew.tid.kittyT = 0;
             kitty.call.wake("sand", "recovery");
           }, 1500);
@@ -200,6 +202,7 @@ kitty = {
         c = c - 0.01;
         if (c <= 0.01) {
           clearInterval(ew.tid.kittyI);
+          digitalWrite(D23,1);
           ew.tid.kittyI = 0;
           if (mode)
             kitty.call.go({ one: 0.52 + kitty.state.def.is.clb, two: 0.15 + kitty.state.def.is.clb, three: 0.38 + kitty.state.def.is.clb, act: "Release", next: mode });
@@ -243,55 +246,6 @@ kitty = {
         }
       }, 1000);
     },
-
-    paterns: {
-      
-      //uvc light
-      uvc: { one: 0.85 + kitty.state.def.is.clb, two: 0.65, act: "Turn on UVC", next: "lock", speed: 70 },
-      
-      // fine grain betonite sand
-      betonite: { one: 1 + kitty.state.def.is.clb, two: 0.01, three: 2 + kitty.state.def.is.clb, act: "Empty", hold: 2, next: "betonite1", speed: 100 },
-      betonite1: { one: 0.01, act: "Level", hold: 3, next: "betonite2", speed: 100 },
-      betonite2: { one: 0.70 + kitty.state.def.is.clb, act: "Return", next: "lock", speed: 100 },
-      
-      // standard non-stick sand
-      nonstick: { one: 1 + kitty.state.def.is.clb, two: 0.01, three: 1.2, act: "Preparing", next: "nonstick_1", speed: 50 },
-      nonstick_1: { one: 1.4 + kitty.state.def.is.clb, two: 1.35, three: 1.4, act: "Step 1", act2: "Returning", next: "nonstick_2", speed: 80 },
-      nonstick_2: { one: 1.5 + kitty.state.def.is.clb, two: 1.45, three: 1.5, act: "Step 2", act2: "Returning", next: "nonstick_3", speed: 80 },
-      nonstick_3: { one: 1.6 + kitty.state.def.is.clb, two: 1.55, three: 1.6, act: "Step 3", act2: "Returning", next: "nonstick_4", speed: 80 },
-      nonstick_4: { one: 1.7 + kitty.state.def.is.clb, two: 1.65, three: 1.95, act: "Step 4", act2: "Returning", next: "nonstick_5", speed: 50 },
-      nonstick_5: { one: 2 + kitty.state.def.is.clb, two: 1.95, act: "Return", act2: "Returning", next: "nonstick_6", speed: 150 },
-      nonstick_6: { one: 2 + kitty.state.def.is.clb, two: 0.01, act: "Emptying", next: "nonstick_7", speed: 50 },
-      nonstick_7: { one: 0.05, two: 0.01, act: "wait", next: "nonstick_8", speed: 100 },
-      nonstick_8: { one: 1 + kitty.state.def.is.clb, two: 0.01, three: 0.70 + kitty.state.def.is.clb, act: "end", next: "lock", speed: 50 },
-
-      // light crystalic silicone sand
-      silicone: { one: 1 + kitty.state.def.is.clb, two: 0.01, three: 1.2, act: "Preparing", next: "silicone1", speed: 80 },
-      silicone1: { one: 1.4 + kitty.state.def.is.clb, two: 1.35, three: 1.4, act: "Step 1", act2: "Returning", next: "silicone2", speed: 100 },
-      silicone2: { one: 1.5 + kitty.state.def.is.clb, two: 1.45, three: 1.5, act: "Step 2", act2: "Returning", next: "silicone3", speed: 100 },
-      silicone3: { one: 1.6 + kitty.state.def.is.clb, two: 1.55, three: 1.6, act: "Step 3", act2: "Returning", next: "silicone4", speed: 100 },
-      silicone4: { one: 1.7 + kitty.state.def.is.clb, two: 1.65, three: 1.7, act: "Step 4", act2: "Returning", next: "silicone5", speed: 100 },
-      silicone5: { one: 2 + kitty.state.def.is.clb, two: 0.01, three: 0.65, act: "step5", act2: "Returning", next: "silicone6", speed: 100 },
-      silicone6: { one: 1 + kitty.state.def.is.clb, two: 0.01, three: 0.70 + kitty.state.def.is.clb, act: "Emptying", act2: "Returning", next: "lock", speed: 100 },
-      
-      // empty sand
-      empty: { one: 2 + kitty.state.def.is.clb, two: 0.65, act: "Emptying Sand", next: "empty1" },
-      empty1: { one: 2 + kitty.state.def.is.clb, two: 0.65, act: "Take 2", next: "empty2", speed: 50 },
-      empty2: { one: 2 + kitty.state.def.is.clb, two: 0.65, act: "Take 3", next: "empty3", speed: 50 },
-      empty3: { one: 2, two: 0.70 + kitty.state.def.is.clb, act: "Returning", next: "lock", speed: 100 },
-      
-      //recovery
-      recovery: { one: 0.45, two: 0.01, three: 0.70 + kitty.state.def.is.clb, act: "recover", next: "lock" },
-
-
-    },
-
-
-
-
-
-
-
 
     sand: function(mode) {
       // if (kitty.state.is.sys.busy) return;
@@ -351,6 +305,7 @@ kitty = {
           if (kitty.dbg) console.log("lock pos c:", c);
           clearInterval(ew.tid.kittyI);
           ew.tid.kittyI = 0;
+          digitalWrite(D23,1);
           kitty.call.go({ one: 0.70 + kitty.state.def.is.clb, two: 0.18 + kitty.state.def.is.clb, three: 0.45 + kitty.state.def.is.clb, act: "Locking", next: "sleep" });
         }
       }, 50);
@@ -365,8 +320,9 @@ kitty = {
         clearInterval(ew.tid.kittyI);
         ew.tid.kittyI = 0;
       }
+      pinMode(D23, "opendrain");
       ew.oled.msg("Going to Sleep");
-      D22.reset(); //stop PWM module
+      //D22.reset(); //stop PWM module
       digitalPulse(D23, 1, [500, 100, 500, 100]);
       if (kitty.state.is.nrf) NRF.updateServices({ 0xffa0: { 0xffa1: { value: E.toString("going to sleep"), notify: true } } });
       ew.tid.kittyT = setTimeout(() => {

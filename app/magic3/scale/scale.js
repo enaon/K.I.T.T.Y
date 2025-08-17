@@ -226,7 +226,7 @@ ew.apps.scale = {
     // event is active
     event: {
         check: function(w) {
-                ew.apps.scale.state.value.counter.event++;
+            ew.apps.scale.state.value.counter.event++;
 
             // do once
             if (ew.apps.scale.state.value.loop != 1000)
@@ -538,7 +538,6 @@ ew.apps.scale = {
         } else if (ew.apps.scale.dbg || ew.dbg) console.log("scale dbg: scale started");
 
         // ---- check for low battery ----
-        //if ( ew.sys.batt("info").percent <= 0){
         if ( ew.is.batS <= 0){
             ew.notify.alert("error", { body: "", title: "low Battery" }, 1, 1);
             ew.apps.scale.stop("low battery");   
@@ -590,8 +589,8 @@ if (!require('Storage').readJSON('ew.json', 1).scale) {
 
 // ---- init ----
 ew.apps.scale.init = () => {
-    poke32(0x50000700 + 27 * 4, 2);
-    poke32(0x50000700 + 28 * 4, 2);
+    //poke32(0x50000700 + 27 * 4, 2);
+    //poke32(0x50000700 + 28 * 4, 2);
     ew.apps.scale.do = require('HX_711').connect({
         def: {},
         sck: D27,

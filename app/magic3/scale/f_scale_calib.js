@@ -12,6 +12,7 @@ ew.face[0] = {
 	init: function() {
 		//start ew.apps.scale  if off
 		if (!ew.apps.scale.do.isReady()) ew.apps.scale.init();
+		ew.apps.scale.stop()
 		this.calibrate=1350;
 		g.clear();
 		g.setCol(0, 15);
@@ -103,6 +104,8 @@ ew.face[0] = {
 		ew.temp.bar = 0; /*TC.removeAllListeners();*/
 		if (this.tid) clearTimeout(this.tid);
 		this.tid = 0;
+		ew.apps.scale.init();
+		if (ew.apps.kitty.state.def.is.scale ) ew.apps.scale.start();
 		return true;
 	},
 	off: function() {

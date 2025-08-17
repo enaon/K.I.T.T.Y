@@ -12,7 +12,7 @@ ew.UI.nav.back.replaceWith(() => {
 });
 //
 ew.face[0] = {
-	offms: (ew.def.off[ew.face.appCurr]) ? ew.def.off[ew.face.appCurr] : 60000,
+	offms: (ew.def.off[ew.face.appCurr]) ? ew.def.off[ew.face.appCurr] : 180000,
 	init: function() {
 		//turn off scale if not needed
 		if (!ew.apps.kitty.state.def.is.scale) ew.apps.scale.stop();

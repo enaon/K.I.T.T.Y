@@ -2,11 +2,10 @@
 // see full license text at https://choosealicense.com/licenses/mit/
 
 E.setConsole(Bluetooth, { force: true });
-pinMode(D13, "opendrain_pullup", true); // ball servo pin
-pinMode(D46, "opendrain_pullup", true); // lock servo pin
-pinMode(D27, "output", true); // sck hx711-lid servo pin
+pinMode(D13, "af_output"); // ball servo pin
+pinMode(D46, "af_output"); // lock servo pin
+//pinMode(D27, "output"); // sck hx711-lid servo pin
 pinMode(D38, "output"); // powerbank control pin
-
 
 // === main app ===
 ew.apps.kitty = {
@@ -75,7 +74,7 @@ ew.apps.kitty = {
     device: 0,
     active: 0,
     connect: (x) => {
-      if(ew.apps.kitty.state.is.vibrator.connected) {
+      if (ew.apps.kitty.state.is.vibrator.connected) {
         ew.apps.kitty.state.msg({ "type": "info", "title": "VIBRATOR", "body": "IS CONNECTED", "persist": 0 });
         return;
       }
@@ -86,9 +85,9 @@ ew.apps.kitty = {
         ew.apps.kitty.vibrator.device = device;
         ew.apps.kitty.state.is.vibrator.connected = 1;
         if (ew.face[0].page == "more1")
-            	ew.UI.btn.c2l("main", "_2x3", 1, "VIB", (ew.apps.kitty.state.def.is.vibrator && ew.apps.kitty.state.is.vibrator.connected) ? ew.apps.kitty.state.is.vibrator.battery : "", 15, ew.apps.kitty.state.def.is.vibrator ? ew.apps.kitty.vibrator.active ? 13 : 4 : 1);
+          ew.UI.btn.c2l("main", "_2x3", 1, "VIB", (ew.apps.kitty.state.def.is.vibrator && ew.apps.kitty.state.is.vibrator.connected) ? ew.apps.kitty.state.is.vibrator.battery : "", 15, ew.apps.kitty.state.def.is.vibrator ? ew.apps.kitty.vibrator.active ? 13 : 4 : 1);
         //device.on('data', function(d) { print("Got:"+JSON.stringify(d)); });
-      }).catch(function () {
+      }).catch(function() {
         ew.apps.kitty.state.is.vibrator.connected = 0;
         ew.apps.kitty.state.msg({ "type": "error", "title": "VIBRATOR", "body": "NOT FOUND", "persist": 0 });
       });
@@ -100,11 +99,11 @@ ew.apps.kitty = {
       }
       ew.apps.kitty.state.is.vibrator.connected = 0;
       if (ew.face[0].page == "more1")
-            	ew.UI.btn.c2l("main", "_2x3", 1, "VIB", (ew.apps.kitty.state.def.is.vibrator && ew.apps.kitty.state.is.vibrator.connected) ? ew.apps.kitty.state.is.vibrator.battery : "", 15, ew.apps.kitty.state.def.is.vibrator ? ew.apps.kitty.vibrator.active ? 13 : 4 : 1);
+        ew.UI.btn.c2l("main", "_2x3", 1, "VIB", (ew.apps.kitty.state.def.is.vibrator && ew.apps.kitty.state.is.vibrator.connected) ? ew.apps.kitty.state.is.vibrator.battery : "", 15, ew.apps.kitty.state.def.is.vibrator ? ew.apps.kitty.vibrator.active ? 13 : 4 : 1);
     },
     write: (action, repeat) => {
       ew.apps.kitty.vibrator.active = action == "turnOn" ? 1 : 0;
-      ew.apps.kitty.vibrator.device.write(`powerbank.${action}(1,${repeat});\n`).catch(function () {
+      ew.apps.kitty.vibrator.device.write(`powerbank.${action}(1,${repeat});\n`).catch(function() {
         ew.apps.kitty.state.msg({ "type": "error", "title": "VIBRATOR", "body": "IS BUSY", "persist": 0 });
       });
     }
@@ -148,7 +147,7 @@ ew.apps.kitty = {
       if (pos <= 0) pos = 0;
       if (1 / i <= pos) pos = 1 / i;
       //console.log("pos:"+pos);
-      analogWrite(pin, (i + pos) / 50.0, { freq: 20, soft: false });
+      analogWrite(pin, (i + pos) / 50.0, { freq: 20, soft: true });
     },
 
     recovery: function(i) {
@@ -156,11 +155,11 @@ ew.apps.kitty = {
         clearInterval(ew.tid.kittyI);
         ew.tid.kittyI = 0;
       }
-      pinMode(D46, "opendrain_pullup", true); // lock servo pin
-      
+      pinMode(i.pin[i.servo], "af_output");
+      //digitalWrite(i.pin[i.servo],1);
+
       ew.apps.kitty.state.msg({ "type": "error", "title": "RECOVERY", "persist": 1 });
 
-      //if ( ew.apps.kitty.state.def.is.voltMon && (ew.sys.batt() <= ew.apps.kitty.state.def.is.fail || ew.apps.kitty.state.is.sys.abort)) {
       if (ew.tid.kittyT) clearTimeout(ew.tid.kittyT);
       ew.tid.kittyT = setTimeout(() => {
         ew.tid.kittyT = 0;
@@ -173,6 +172,9 @@ ew.apps.kitty = {
         clearInterval(ew.tid.kittyI);
         ew.tid.kittyI = 0;
       }
+      // ---- stop pwm on pin ----
+      //pinMode(i.pin[i.servo], "opendrain");
+      //digitalWrite(i.pin[i.servo],1);
 
       if (i.act == "Return" && ew.apps.kitty.state.def.auto.uvc) ew.apps.kitty.state.is.auto.uvc = 1;
 
@@ -185,12 +187,13 @@ ew.apps.kitty = {
         if (90 <= t) ew.apps.kitty.state.msg({ "type": "error", "title": "Waste bin Full", "persist": 1 });
       }
 
-      // ---- release lid servo ----
+      // ---- handle lid servo / scale ----
       if (ew.apps.kitty.state.def.is.lid && i.act && i.act.includes("Lid")) {
-        ew.apps.scale.state.is.bypass=0;
-        pinMode(i.pin.lid, "input"); //release servo
-        pinMode(i.pin.lid, "output", true);
+        ew.apps.scale.state.is.bypass = 0;
+        //pinMode(i.pin.lid, "input"); //release servo
+        //pinMode(i.pin.lid, "output", true);
         if (!ew.apps.kitty.state.def.is.scale) digitalWrite(i.pin.lid, 1, 100); //set hx711 to sleep mode
+        else ew.apps.scale.init();
       }
 
       // ---- run next patern ----
@@ -227,6 +230,7 @@ ew.apps.kitty = {
       state.is.volt.base = ew.sys.batt();
 
       i.pin = { ball: D13, lock: D46, lid: D27 };
+      //pinMode(i.pin[i.servo], "af_output");
 
       // ---- dynamic values ----
       if (typeof i.next === 'function') i.next = i.next();
@@ -250,14 +254,15 @@ ew.apps.kitty = {
           if (3 == i.hold && i.vibration == "turnOn") setTimeout(() => { ew.apps.kitty.vibrator.write("turnOff"); }, 1500);
         }
       }
-      
-      // ---- lid ----
-      if (ew.apps.kitty.state.def.is.lid && i.act && i.act.includes("Lid")) 
-        ew.apps.scale.state.is.bypass=1;
-        
+
+      // ---- lid / scale ----
+      if (ew.apps.kitty.state.def.is.lid && i.act && i.act.includes("Lid") ){
+        pinMode(i.pin[i.servo], "af_output");
+        ew.apps.scale.state.is.bypass = 1;
+      }
       // ---- start the loop ----
       ew.apps.kitty.call.loop(i);
-      
+
     },
 
     loop: function(i) {
@@ -351,14 +356,14 @@ ew.apps.kitty = {
       }
 
       // ---- check for low battery ----
-      if (e != "recovery" && ew.sys.batt("info").percent <= 0) {
+      if (e != "recovery" && ew.is.batS <= 0) {
         ew.apps.kitty.state.msg({ "type": "error", "title": "Low Battery", "alert": 1, "persist": 1 });
         if (ew.apps.kitty.state.def.is.voltMon)
           return;
       }
 
       // ---- connect vibrator ----
-      if (ew.apps.kitty.state.def.is.vibrator && !ew.apps.kitty.state.is.vibrator.connected) 
+      if (ew.apps.kitty.state.def.is.vibrator && !ew.apps.kitty.state.is.vibrator.connected)
         ew.apps.kitty.vibrator.connect();
 
       // ---- check if allready on ----
@@ -423,13 +428,11 @@ ew.apps.kitty = {
         // ---- power is off ----
         if (ew.pin.CHRG.read()) {
 
-
-
-          // ---- reset servo pins, else PWM module draws 200μA ----
-          pinMode(D13, "opendrain_pullup", true); //ball servo
-          pinMode(D46, "opendrain_pullup", true); //lock servo
-          poke32(0x50000700 + 13 * 4, 2);
-          poke32(0x50000700 + 46 * 4, 2);
+          // ---- reset pins ----
+          pinMode(D13, "af_output", true); // ball servo pin
+          pinMode(D46, "af_output", true); // lock servo pin
+          //poke32(0x50000700 + 13 * 4, 2);
+          //poke32(0x50000700 + 46 * 4, 2);
           // ---- charge pin draws 70μΑ ----
           poke32(0x50000700 + 8 * 4, 2);
 
@@ -462,7 +465,7 @@ ew.apps.kitty = {
               ew.apps.kitty.state.msg({ "type": "info", "title": "Bye bye", "persist": 0 });
               ew.face.off(8000);
             }, 2000);
-            
+
           ew.apps.kitty.state.is.sys.busy = 0;
           ew.apps.kitty.state.is.sys.pwr = 0;
           ew.apps.kitty.state.is.sys.pause = 0;
@@ -547,7 +550,7 @@ ew.sys.on("button", (x) => {
   if (ew.apps.kitty.state.is.sys.busy) {
     if (x == "long") {
       ew.apps.kitty.state.msg({ "type": "info", "title": ew.apps.kitty.state.is.sys.pause ? "Resuming" : "Paused", "persist": ew.apps.kitty.state.is.sys.pause ? 0 : 1 });
-      ew.apps.scale.state.is.bypass = ew.apps.kitty.state.is.sys.pause? 0:1;
+      ew.apps.scale.state.is.bypass = ew.apps.kitty.state.is.sys.pause ? 0 : 1;
       ew.apps.kitty.state.is.sys.pause = 1 - ew.apps.kitty.state.is.sys.pause;
       return;
     }
@@ -618,12 +621,12 @@ else ew.apps.kitty.state.def = require('Storage').readJSON('ew.json', 1).kitty;
 
 //  ---- connect vibrator ----
 if (ew.apps.kitty.state.def.is.vibrator && !ew.apps.kitty.state.is.vibrator.connected) {
-  setTimeout(()=>{ew.apps.kitty.vibrator.connect();},12000);
+  setTimeout(() => { ew.apps.kitty.vibrator.connect(); }, 12000);
 }
 
 // ---- wake for ToF reading ----
 if (ew.apps.kitty.state.def.is.tof && ew.apps.kitty.state.def.is.scale)
-  setTimeout(()=>{ew.apps.kitty.call.wake();},1000);
+  setTimeout(() => { ew.apps.kitty.call.wake(); }, 1000);
 // === move patterns ===
 
 ew.apps.kitty.pattern = (key) => {
@@ -645,37 +648,41 @@ ew.apps.kitty.pattern = (key) => {
 
       // ---- Pellet Non-Stick ----
     case "pellet":
-      return { servo: "ball", one: 1.2 + clb, act: "Empty", hold: 10, vibration: "pulse", repeat: 6, next: "pellet_1" };
+      return { servo: "ball", one: 0.8 + clb, act: "Empty",  next: "pellet_1" };
     case "pellet_1":
-      return { servo: "ball", one: 1.3 + clb, hold: 10, vibration: "pulse", repeat: 6, next: "pellet_2" };
+      return { servo: "ball", one: 0.9 + clb, hold: 20, vibration: "pulse", repeat: 10, next: "pellet_2" };
     case "pellet_2":
-      return { servo: "ball", one: 1.4 + clb, hold: 10, vibration: "pulse", repeat: 6, next: "pellet_3" };
+      return { servo: "ball", one: 1 + clb, hold: 20, vibration: "pulse", repeat: 10, next: "pellet_3" };
     case "pellet_3":
-      return { servo: "ball", one: 1.5 + clb, hold: 10, vibration: "pulse", repeat: 6, next: "pellet_4" };
+      return { servo: "ball", one: 1.1 + clb, hold: 30, vibration: "pulse", repeat: 15, next: "pellet_4" };
     case "pellet_4":
-      return { servo: "ball", one: 1.6 + clb, hold: 10, vibration: "pulse", repeat: 6, next: "pellet_5" };
+      return { servo: "ball", one: 1.2 + clb, hold: 30, vibration: "pulse", repeat: 15, next: "pellet_5" };
     case "pellet_5":
-      return { servo: "ball", one: 1.9 + clb, hold: 6, vibration: "pulse", repeat: 4, next: "pellet_6" };
+      return { servo: "ball", one: 1.3 + clb, hold: 30, vibration: "pulse", repeat: 15, next: "pellet_6" };
     case "pellet_6":
-      return { servo: "ball", one: 2.0 + clb, act: "ToF", hold: 6, vibration: "pulse", repeat: 8, next: "pellet_7", speed: 200 };
+      return { servo: "ball", one: 1.4 + clb, hold: 30, vibration: "pulse", repeat: 15, next: "pellet_7" };
     case "pellet_7":
-      return { servo: "ball", one: 0.5 + clb, act: "Empty", hold: 1, next: "pellet_8" };
+      return { servo: "ball", one: 1.5 + clb, hold: 30, vibration: "pulse", repeat: 15, next: "pellet_8" };
     case "pellet_8":
-      return { servo: "ball", one: 0.4 + clb, hold: 3, vibration: "pulse", repeat: 4, next: "pellet_9" };
+      return { servo: "ball", one: 2.0 + clb, act: "ToF", hold: 6, vibration: "pulse", repeat: 8, next: "pellet_9", speed: 100 };
     case "pellet_9":
-      return { servo: "ball", one: 0.3 + clb, hold: 3, vibration: "pulse", repeat: 4, next: "pellet_10" };
+      return { servo: "ball", one: 1.1 + clb,  next: "pellet_10" };
     case "pellet_10":
-      return { servo: "ball", one: 0.2 + clb, hold: 3, vibration: "pulse", repeat: 4, next: "pellet_11" };
+      return { servo: "ball", one: 1 + clb, hold: 20, vibration: "turnOn", next: "pellet_11" };
     case "pellet_11":
-      return { servo: "ball", one: 0.1 + clb, next: "pellet_12" };
+      return { servo: "ball", one: 0.01 , hold: 10, next: "pellet_12",speed: 50 };
     case "pellet_12":
-      return { servo: "ball", one: 0.01, hold: 30, vibration: "turnOn", next: "pellet_13" };
+      return { servo: "ball", one: 1.1, two: 0.01, three: 1.3,  vibration: "turnOn", next: "pellet_13",speed: 50 };
     case "pellet_13":
-      return { servo: "ball", one: 0.02, two: 0.01, hold: 30, vibration: "turnOn", next: "pellet_14" };
+      return { servo: "ball", one: 0.01, hold: 10, vibration: "turnOn", next: "pellet_14",speed: 50  };
     case "pellet_14":
-      return { servo: "ball", one: 0.65 + clb, vibration: "turnOff", next: "pellet_15" };
+      return { servo: "ball", one: 1.1, hold: 10, vibration: "turnOn",next: "pellet_15",speed: 50 };
     case "pellet_15":
-      return { servo: "ball", one: 0.70 + clb, act: "Return", next: "lock" };
+      return { servo: "ball", one: 0.01, hold: 10, vibration: "turnOn",next: "pellet_16",speed: 50 };
+    case "pellet_16":
+      return { servo: "ball", one: 0.65 + clb, vibration: "turnOff", next: "pellet_17" };
+    case "pellet_17":
+      return { servo: "ball", one: 0.70 + clb, hold: 20, vibration: "pulse", repeat: 10, act: "Return", next: "lock" };
 
       // ---- Standard Non-Stick Sand ----
     case "nonstick":
@@ -732,31 +739,13 @@ ew.apps.kitty.pattern = (key) => {
       // === System Patterns ===
       // ---- Lock ----
     case "lock":
-      return {
-        servo: "lock",
-        one: 1,
-        act: "Lock",
-        vibration: "pulse",
-        repeat: 3,
-        next: "secure",
-        speed: 30,
-        hold: state.is.vibrator.connected ? 4 : 1
-      };
+      return { servo: "lock", one: 1, act: "Lock", vibration: "pulse", repeat: 3, next: "secure", speed: 30, hold: state.is.vibrator.connected ? 4 : 1 };
     case "secure":
       return { servo: "ball", one: 0.45 + clb, two: 0.15 + clb, three: 0.45 + clb, act: "Secure", next: () => state.def.is.lid ? "lid_close" : "sleep" };
 
       // ---- Unlock ----
     case "unlock":
-      return {
-        servo: "lock",
-        one: 0.02,
-        two: 0.01,
-        repeat: 3,
-        hold: 2,
-        act: "Unlock",
-        next: "release",
-        speed: 30,
-      };
+      return { servo: "lock", one: 0.02, two: 0.01, repeat: 3, hold: 2, act: "Unlock", next: "release", speed: 75 };
     case "release":
       return {
         servo: "ball",
@@ -768,15 +757,14 @@ ew.apps.kitty.pattern = (key) => {
         speed: 150,
         next: () => state.is.action == "clean" ?
           state.def.sand[state.def.is.sandType].prep ?
-          "prepare" : state.def.sand[state.def.is.sandType].name :
-          state.is.action,
+          "prepare" : state.def.sand[state.def.is.sandType].name : state.is.action,
       };
 
       // ---- Lid Control ----
     case "lid_open":
-      return { servo: "lid", one: state.def.lid.open, act: "Open Lid", next: "unlock", speed: 100 };
+      return { servo: "lid", one: state.def.lid.open, act: "Open Lid", next: "unlock", speed: 75 };
     case "lid_close":
-      return { servo: "lid", one: state.def.lid.shut, act: "Close Lid", next: "sleep", speed: 100 };
+      return { servo: "lid", one: state.def.lid.shut, act: "Close Lid", next: "sleep", speed: 75 };
     case "lid_toggle":
       return {
         servo: "lid",
@@ -794,45 +782,19 @@ ew.apps.kitty.pattern = (key) => {
     case "recovery":
       return { servo: "ball", one: 0.3, two: 0.2, act: "Recovery", next: "recovery1" };
     case "recovery1":
-      return {
-        servo: "ball",
-        one: 0.01,
-        vibration: "turnOn",
-        next: "recovery2",
-        hold: state.is.vibrator.connected ? 4 : 1
-      };
+      return { servo: "ball", one: 0.01, vibration: "turnOn", next: "recovery2", hold: state.is.vibrator.connected ? 4 : 1 };
     case "recovery2":
       return { servo: "ball", one: 0.65 + clb, vibration: "turnOff", next: "lock" };
-
 
       // === Extra Patterns ===
 
       // ---- prepare clean motion ----
     case "prepare":
-      return {
-        servo: "ball",
-        one: 1 + clb,
-        act: "Prepare",
-        hold: 1,
-        next: "prepare_1",
-        speed: 80,
-      };
+      return { servo: "ball", one: 1 + clb, act: "Prepare", hold: 1, next: "prepare_1", speed: 80 };
     case "prepare_1":
-      return {
-        servo: "ball",
-        one: 0.01,
-        hold: 1,
-        next: "prepare_2",
-        speed: 80,
-        next: () => state.def.sand[state.def.is.sandType].name
-      };
+      return { servo: "ball", one: 0.01, hold: 1, next: "prepare_2", speed: 80, next: () => state.def.sand[state.def.is.sandType].name };
     case "prepare_2":
-      return {
-        servo: "ball",
-        one: 1 + clb,
-        speed: 80,
-        next: () => state.def.sand[state.def.is.sandType].name
-      };
+      return { servo: "ball", one: 1 + clb, speed: 80, next: () => state.def.sand[state.def.is.sandType].name };
 
       // ---- UVC Light ----
     case "uvc":
@@ -840,26 +802,21 @@ ew.apps.kitty.pattern = (key) => {
 
       // ---- Empty - vibrator detect ----
     case "empty":
-      return {
-        servo: "ball",
-        one: 1.6 + clb,
-        act: "Empty Sand",
-        next: state.is.vibrator.connected ? "empty_v1" : "empty1"
-      };
+      return { servo: "ball", one: 1.6 + clb, act: "Empty Sand", next: state.is.vibrator.connected ? "empty_v1" : "empty1" };
 
       // ---- Empty (Vibrator Disabled) ----
     case "empty1":
-      return { servo: "ball", one: 1.90 + clb, hold: 3, next: "empty2" };
+      return { servo: "ball", one: 1.90 + clb, hold: 2, next: "empty2" };
     case "empty2":
-      return { servo: "ball", one: 1.50 + clb, hold: 1, next: "empty3" };
+      return { servo: "ball", one: 1.10 + clb, hold: 1, next: "empty3" };
     case "empty3":
-      return { servo: "ball", one: 1.95 + clb, hold: 3, next: "empty4", speed: 50 };
+      return { servo: "ball", one: 1.95 + clb, hold: 2, next: "empty4", speed: 50 };
     case "empty4":
-      return { servo: "ball", one: 1 + clb, next: "empty5" };
+      return { servo: "ball", one: 2.0 + clb, two: 1.0 + clb, three: 2 + clb, next: "empty5" };
     case "empty5":
-      return { servo: "ball", one: 2.0 + clb, hold: 4, next: "empty6", speed: 50 };
+      return { servo: "ball", one: 2.0 + clb, two: 1.0 + clb, three: 2 + clb, hold: 1, next: "empty6", speed: 50 };
     case "empty6":
-      return { servo: "ball", one: 2.0 + clb, two: 1.0, three: 2.0 + clb, next: "empty7", speed: 50 };
+      return { servo: "ball", one: 2.0 + clb, two: 1.0, three: 2.0 + clb, hold: 1, next: "empty7", speed: 50 };
     case "empty7":
       return { servo: "ball", one: 0.65 + clb, act: "Return", next: "lock" };
 

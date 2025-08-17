@@ -49,9 +49,13 @@ ew.do.reset.settings = function() {
 	switch (serial) {
 		case "480e4628-4adf4a73":
 			//scale_calibration = { "lsbGrams": -0.02156602521, "zero": 800575, "lost": 17265, "ball": 1350, "type": "side" };
-			scale_calibration= { "lsbGrams": -0.02046967521, "zero": 821656, "lost": 16819, "ball": 1350,  "type": "side"};
+			scale_calibration= { "lsbGrams": -0.02046967521, "zero": 821656, "lost": 16819, "ball": 1350,  "type": "side" };
 			ew.def.name = "M1";
 			break;
+		case "50d1bd2b-8aa02e3d":
+			scale_calibration= 	{ "lsbGrams": -0.02538519270, "zero": -48670, "lost": -1305, "ball": 1350, "type": "side" };
+			ew.def.name = "M2";
+			break;			
 		case "95a12ce2-c1a9260b":
 			scale_calibration = { "lsbGrams": -0.00750888147, "zero": -443925, "lost": -3333, "ball": 1350, "type": "down" };
 			ew.def.name = "M3";
@@ -102,9 +106,9 @@ ew.is = {
 ew.sys.buzz={};
 
 if (process.env.BOARD == "MAGIC3" || process.env.BOARD == "Magic3" || process.env.BOARD == "ROCK")
-ew.sys.buzz.type={na:[15,15,15],ok:15,ln:80,error:[50,25,50,25,50],on:40,off:[20,25,20]}
+ew.sys.buzz.type={na:[15,15,15],ok:15,ln:80,error:[50,25,50,25,50],on:40,off:[20,25,20]};
 else
-ew.sys.buzz.type={ok:[20,40,20],na:25,ln:80,error:[50,25,50,25,50],on:40,off:[20,25,20]}
+ew.sys.buzz.type={ok:[20,40,20],na:25,ln:80,error:[50,25,50,25,50],on:40,off:[20,25,20]};
 
 //buz={ok:[20,40,20],na:25,ln:80,on:40,off:[20,25,20]};
 ew.sys.buzz.sys = digitalPulse.bind(null,ew.pin.BUZZ,ew.pin.BUZ0);
@@ -123,7 +127,7 @@ ew.sys.batt = function(i, c) {
 	poke32(hexString, 2); // disconnect pin for power saving, otherwise it draws 70uA more 		let per=(100 * (v - l) / (h - l) | 0);
 	let per=(100 * (v - l) / (h - l) | 0);
 	// K.I.T.T.Y battery indicator support 
-	if (!g.isOn && ew.apps.kitty && !ew.apps.kitty.state.is.sys.busy ) ew.is.batS=( c? per: (v <= l) ? 0 : (h <= v) ? 100 : per );
+	if (i === "info" && !g.isOn && ew.apps.kitty && !ew.apps.kitty.state.is.sys.busy ) ew.is.batS=( c? per: (v <= l) ? 0 : (h <= v) ? 100 : per );
 	if (per <= 0) { ew.is.lowBattery=1;ew.sys.emit('battery','low');}
 	if (10 <= per && ew.is.lowBattery ) { ew.is.lowBattery=0; ew.sys.emit('battery','ok');}
 	if (i === "info") {
@@ -132,7 +136,7 @@ ew.sys.batt = function(i, c) {
 			"percent": c? per :((v <= l) ? 0 : (h <= v) ? 100 : per),
 			"low":l,
 			"hi":h
-		}
+		};
 	}
 	else if (i) {
 		return ( c? per: (v <= l) ? 0 : (h <= v) ? 100 : per );
@@ -140,7 +144,7 @@ ew.sys.batt = function(i, c) {
 	else return +v.toFixed(2);
 };
 
-ew.sys.on('hour', ew.sys.batt);
+ew.sys.on('hour', function(){ew.sys.batt("info")});
 // ----  sleep ----
 
 ew.do.sysSleep = function() {

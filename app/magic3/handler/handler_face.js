@@ -29,7 +29,7 @@ ew.face={
 		}else ew.face.go(this.appCurr,-1);
 	},
 	go:function(app,page,arg){
-		if(!g.isOn) ew.sys.batt();
+		if(!g.isOn) ew.sys.batt("info").percent;
 		this.appPrev=this.appCurr;
 		this.pagePrev=this.pageCurr;
 		this.appCurr=app;
